@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
-using Assets.Scripts.Player;
 
 public class Player : MonoBehaviour, IControllable {
     public class CommandEventArgs : EventArgs
@@ -28,9 +27,9 @@ public class Player : MonoBehaviour, IControllable {
 	    {
 	        if (CommandEventHandler != null)
 	        {
-	            CommandEventHandler.Invoke(new CommandEventArgs()
+	            CommandEventHandler.Invoke(this, new CommandEventArgs()
 	            {
-	                Command = _command;
+	                Command = _command,
 	            });
 	        }
 	    }
@@ -39,11 +38,22 @@ public class Player : MonoBehaviour, IControllable {
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
-            _command.Left = command;
+        _command.Left = command;
     }
 
     public void MoveRightSide(CommandType command, GameState state)
     {
         _command.Left = command;
+    }
+
+    internal static Player Create(Vector3 initialPos)
+    {
+        var playerPrefab = Resources.Load<Player>("Prefabs/Player");
+
+        var player = Instantiate<Player>(playerPrefab);
+        player.transform.position = initialPos;
+
+
+        return player;
     }
 }
