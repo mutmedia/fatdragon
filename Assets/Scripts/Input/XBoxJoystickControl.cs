@@ -53,43 +53,47 @@ class XBoxJoystickControl : IControl
 
         if (y > deadzone)
         {
-            controllable.MoveLeftSide(CommandType.up, state);
-        }
-
-        if (y < -deadzone)
-        {
             controllable.MoveLeftSide(CommandType.down, state);
         }
-
-        if (x > deadzone)
+        else if (y < -deadzone)
+        {
+            controllable.MoveLeftSide(CommandType.up, state);
+        }
+        else if (x < -deadzone)
         {
             controllable.MoveLeftSide(CommandType.left, state);
         }
-
-        if (x < -deadzone)
+        else if (x > deadzone)
         {
             controllable.MoveLeftSide(CommandType.right, state);
         }
+        else
+        {
+            controllable.MoveLeftSide(CommandType.none, state);
+        }
 
-        if (Input.GetAxisRaw("Joystick" + index + "Fire0") > triggerThreshold)
+        if (Input.GetButton("Joystick" + index + "Button1"))
         {
             controllable.MoveRightSide(CommandType.right, state);
         }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire1") > triggerThreshold)
+        else if (Input.GetButton("Joystick" + index + "Button2"))
         {
             controllable.MoveRightSide(CommandType.left, state);
         }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire2") > triggerThreshold)
+        else if (Input.GetButton("Joystick" + index + "Button3"))
         {
             controllable.MoveRightSide(CommandType.up, state);
         }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire3") > triggerThreshold)
+        else if (Input.GetButton("Joystick" + index + "Button0"))
         {
             controllable.MoveRightSide(CommandType.down, state);
         }
+        else
+        {
+            controllable.MoveRightSide(CommandType.none, state);
+        }
+
+        
 
         if (Input.GetButton("Start"))
         {
