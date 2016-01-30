@@ -18,6 +18,7 @@ using System.Collections;
             List = new ArrayList();
             CommandIndex = -1;
             player.CommandEventHandler += Compare;
+            this.Add(player.getRandomCommand());
         }
 
         public void Compare(object sender, CommandEventArgs a)

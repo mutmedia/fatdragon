@@ -17,6 +17,8 @@ public class Player : MonoBehaviour, IControllable {
     private float _lastTime;
     private Command _command = new Command();
     private Command _lastCommand = new Command();
+    private System.Random _random = new System.Random();
+    private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
 
     public event EventHandler<CommandEventArgs> CommandEventHandler;
     
@@ -41,6 +43,13 @@ public class Player : MonoBehaviour, IControllable {
 	    _lastCommand = _command;
 	}
 
+    public Command getRandomCommand()
+    {
+        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
+        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
+        return new Command(randomLeft, randomRight);
+    }
+
     public void ResolveCommandResult(bool result)
     {
         float actualTime = Time.time;
@@ -48,7 +57,7 @@ public class Player : MonoBehaviour, IControllable {
         if(result)
         {
             float timeDelta = actualTime - _lastTime;
-            if(timePace - timeLimitRange/2 <= timeDelta || timeDelta >= timePace + timeLimitRange / 2)
+            if(timePace - timeLimitRange/2 <= timeDelta && timeDelta <= timePace + timeLimitRange / 2)
             {
                 didPlayerGetRight = true;
             }
