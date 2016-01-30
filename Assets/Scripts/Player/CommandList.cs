@@ -26,8 +26,9 @@ public class CommandList
 
     public Command getRandomCommand()
     {
-        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length-1));
-        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length-1));
+        int Length = _valuesCommandTypes.Length - 1;
+        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
+        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
         return new Command(randomLeft, randomRight);
     }
 
