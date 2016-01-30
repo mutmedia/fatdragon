@@ -30,7 +30,7 @@ using System.Collections;
                 result = true;
             }
 
-            player.CommandSuccess = result;
+            player.ResolveCommandResult(result);
         }
 
         public void Add(Command command)
