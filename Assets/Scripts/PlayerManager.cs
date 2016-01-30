@@ -23,7 +23,7 @@ class PlayerManager : MonoBehaviour
 
     public Player CreatePlayer()
     {
-        var player = Player.Create(_startPositionList[players.Count].position);
+        var player = Player.Create(_startPositionList[players.Count].position, players.Count);
         players.Add(player);
         return player;
     }

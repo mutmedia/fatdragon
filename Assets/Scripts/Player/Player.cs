@@ -50,6 +50,7 @@ public class Player : MonoBehaviour, IControllable {
     {
         string spriteName = "Idle";
         bool flip = false;
+
         
         if (_command.Left == CommandType.up && _command.Right == CommandType.down)
         {
@@ -81,10 +82,20 @@ public class Player : MonoBehaviour, IControllable {
             spriteName = "LeftArmDown";
             flip = true;
         }
+        else if (_command.Left == CommandType.right && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmLeft";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.left && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmLeft";
+        }
 
-        Sprite sprite = Resources.Load(spriteName, typeof(Sprite)) as Sprite;
-        this.GetComponent<SpriteRenderer>().sprite = sprite;
-        this.GetComponent<SpriteRenderer>().flipX = flip;
+        Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
+        GetComponent<SpriteRenderer>().sprite = sprite;
+        GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
+        GetComponent<SpriteRenderer>().transform.localScale = new Vector3(flip ? -1 : 1, 1, 1);
     }
 
     public void ResolveCommandResult(bool result)
@@ -125,14 +136,17 @@ public class Player : MonoBehaviour, IControllable {
         inputChanged = true;
     }
 
-    internal static Player Create(Vector3 initialPos)
+    internal static Player Create(Vector3 initialPos, int index)
     {
         var playerPrefab = Resources.Load<Player>("Prefabs/Player");
 
         var player = Instantiate<Player>(playerPrefab);
         player.transform.position = initialPos;
+        player.Number = index;
 
 
         return player;
     }
+
+    public int Number { get; set; }
 }
