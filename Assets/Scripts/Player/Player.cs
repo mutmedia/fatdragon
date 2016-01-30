@@ -104,15 +104,17 @@ public class Player : MonoBehaviour, IControllable {
     public void ResolveCommandResult(bool result)
     {
         float actualTime = Time.time;
-        bool didPlayerGetRight = false;
+        bool didPlayerGetRight = result;
         if(result)
         {
+            
             float timeDelta = actualTime - _lastTime;
             if(timePace - timeLimitRange/2 <= timeDelta && timeDelta <= timePace + timeLimitRange / 2)
             {
                 didPlayerGetRight = true;
             }
             _lastTime = actualTime;
+            
         }
 
         if(didPlayerGetRight)

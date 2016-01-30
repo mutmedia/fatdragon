@@ -7,10 +7,10 @@ namespace Assets.Scripts.Enums
 {
     public enum CommandType
     {  
-        up,
         down,
-        left,
         right,
+        up,
+        left,
         none
     }
 }

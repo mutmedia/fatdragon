@@ -6,37 +6,39 @@ using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
 
-public class CommandList : MonoBehaviour
+public class CommandList 
+{
+    int CommandIndex;
+    public ArrayList List;
+    public List<Player> Players = new List<Player>();
+
+    private System.Random _random = new System.Random();
+    private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+
+    public CommandList()
     {
-        int CommandIndex;
-        public ArrayList List;
+        List = new ArrayList();
+        CommandIndex = -1;
+        Command newCommand = getRandomCommand();
+        this.Add(newCommand);
+        Debug.Log(newCommand.Left+" "+newCommand.Right);
+    }
 
-        private System.Random _random = new System.Random();
-        private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+    public Command getRandomCommand()
+    {
+        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length-1));
+        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length-1));
+        return new Command(randomLeft, randomRight);
+    }
 
-        public Player player;
-
-        void Start()
-        {
-            List = new ArrayList();
-            CommandIndex = -1;
-            player.CommandEventHandler += Compare;
-            this.Add(this.getRandomCommand());
-        }
-
-        public Command getRandomCommand()
-        {
-            CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            return new Command(randomLeft, randomRight);
-        }
-
-        public void Compare(object sender, CommandEventArgs a)
+    public void Compare(object sender, CommandEventArgs a)
+    {
+        foreach(Player player in Players)
         {
             bool result = false;
             Command command = (Command)a.Command;
             Command item = (Command)List[CommandIndex];
-            if(command.Left == item.Left && command.Right == item.Right)
+            if (command.Left == item.Left && command.Right == item.Right)
             {
                 result = true;
             }
@@ -44,19 +46,27 @@ public class CommandList : MonoBehaviour
             player.ResolveCommandResult(result);
         }
 
-        public void Add(Command command)
-        {
-            CommandIndex++;
-            List.Add(command);
-        }
+    }
 
-        public void Next()
+    public void Add(Command command)
+    {
+        CommandIndex++;
+        List.Add(command);
+    }
+
+    public void Add(Player player)
+    {
+        Players.Add(player);
+        player.CommandEventHandler += Compare;
+    }
+
+    public void Next()
+    {
+        CommandIndex++;
+
+        if (CommandIndex >= List.Count)
         {
-            CommandIndex++;
-     
-            if(CommandIndex >= List.Count)
-            {
-                CommandIndex = 0;
-            }
+            CommandIndex = 0;
         }
     }
+}
