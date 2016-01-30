@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
+using Assets.Scripts;
 
 public class CommandEventArgs : EventArgs
 {
@@ -12,8 +13,7 @@ public class CommandEventArgs : EventArgs
 public class Player : MonoBehaviour, IControllable {
 
     private bool _commandSuccess;
-    public float timeLimitRange;
-    public float timePace;
+
     private float _lastTime;
     private Command _command = new Command();
     private Command _lastCommand = new Command();
@@ -103,19 +103,8 @@ public class Player : MonoBehaviour, IControllable {
 
     public void ResolveCommandResult(bool result)
     {
-        float actualTime = Time.time;
+        
         bool didPlayerGetRight = result;
-        if(result)
-        {
-            
-            float timeDelta = actualTime - _lastTime;
-            if(timePace - timeLimitRange/2 <= timeDelta && timeDelta <= timePace + timeLimitRange / 2)
-            {
-                didPlayerGetRight = true;
-            }
-            _lastTime = actualTime;
-            
-        }
 
         if(didPlayerGetRight)
         {
@@ -125,6 +114,16 @@ public class Player : MonoBehaviour, IControllable {
         {
             Debug.Log("Fail!");
         }
+    }
+
+    public void OnTimeSucessEvent(object sender, EventArgs e)
+    {
+
+    }
+
+    public void OnTimeFailEvent(object sender, EventArgs e)
+    {
+
     }
 
     public void MoveLeftSide(CommandType command, GameState state)
