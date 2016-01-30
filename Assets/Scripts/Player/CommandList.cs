@@ -17,7 +17,7 @@ namespace Assets.Scripts.Player
             CommandIndex = -1;
         }
 
-        public bool Compare(object sender, EventArgs ar)
+        public bool Compare(object sender, EventArgs a)
         {
             bool result = false;
             Command item = (Command)List[CommandIndex];
