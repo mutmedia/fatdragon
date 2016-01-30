@@ -76,11 +76,11 @@ public class Player : MonoBehaviour, IControllable {
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
-            _command.Left = command;
+        _command.Left = command;
     }
 
     public void MoveRightSide(CommandType command, GameState state)
     {
-        _command.Left = command;
+        _command.Right = command;
     }
 }
