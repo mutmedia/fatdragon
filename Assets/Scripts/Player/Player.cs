@@ -24,20 +24,21 @@ public class Player : MonoBehaviour, IControllable {
 	// Update is called once per frame
 	void Update ()
 	{
-	    if (_lastCommand == _command) return;
-        if (CommandEventHandler != null)
-        {
-            CommandEventHandler.Invoke(new CommandEventArgs()
-            {
-                Command = _command;
-            });
-        }
+	    if (_lastCommand != _command)
+	    {
+	        if (CommandEventHandler != null)
+	        {
+	            CommandEventHandler.Invoke(new CommandEventArgs()
+	            {
+	                Command = _command;
+	            });
+	        }
+	    }
 	    _lastCommand = _command;
 	}
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
-        if(command != CommandType.none && _command.Left == CommandType.none)
             _command.Left = command;
     }
 
