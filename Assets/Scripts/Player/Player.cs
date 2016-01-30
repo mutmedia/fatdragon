@@ -24,13 +24,16 @@ public class Player : MonoBehaviour, IControllable {
 	void Start () {
         _lastTime = Time.time;
     }
-	
+
+
+    private bool inputChanged;
 	// Update is called once per frame
 	void Update ()
 	{
-	    if (_lastCommand != _command)
-	    {
-	        if (CommandEventHandler != null)
+        if (inputChanged)
+        {
+            inputChanged = false;
+            if (CommandEventHandler != null)
 	        {
 	            CommandEventHandler.Invoke(this, new CommandEventArgs()
 	            {
@@ -38,8 +41,51 @@ public class Player : MonoBehaviour, IControllable {
 	            });
 	        }
 	    }
+        
 	    _lastCommand = _command;
-	}
+        UpdateSprite();
+    }
+
+    void UpdateSprite()
+    {
+        string spriteName = "Idle";
+        bool flip = false;
+        
+        if (_command.Left == CommandType.up && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmUp";
+            flip = false;
+        } 
+        else if(_command.Left == CommandType.up && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmUp";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.left && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmLeft";
+            flip = false;
+        }
+        else if (_command.Left == CommandType.right && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmLeft";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.down && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmDown";
+            flip = false;
+        }
+        else if (_command.Left == CommandType.down && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmDown";
+            flip = true;
+        }
+
+        Sprite sprite = Resources.Load(spriteName, typeof(Sprite)) as Sprite;
+        this.GetComponent<SpriteRenderer>().sprite = sprite;
+        this.GetComponent<SpriteRenderer>().flipX = flip;
+    }
 
     public void ResolveCommandResult(bool result)
     {
@@ -67,11 +113,26 @@ public class Player : MonoBehaviour, IControllable {
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
+        if (_lastCommand.Left == command) return;
         _command.Left = command;
+        inputChanged = true;
     }
 
     public void MoveRightSide(CommandType command, GameState state)
     {
+        if (_lastCommand.Right == command) return;
         _command.Right = command;
+        inputChanged = true;
+    }
+
+    internal static Player Create(Vector3 initialPos)
+    {
+        var playerPrefab = Resources.Load<Player>("Prefabs/Player");
+
+        var player = Instantiate<Player>(playerPrefab);
+        player.transform.position = initialPos;
+
+
+        return player;
     }
 }
