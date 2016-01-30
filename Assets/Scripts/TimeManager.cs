@@ -12,20 +12,20 @@ namespace Assets.Scripts
         public float timeLimitRange;
         public float timePace;
         public bool flag = false;
-        private bool _starCounting;
+        private bool _startCounting;
         private float _lastTime;
 
-        public EventHandler<EventArgs> TimeNextCommand;
+        public EventHandler<EventArgs> TimeNextCommandEventHandler;
 
-        public void StarCounting()
+        public void StartCounting()
         {
-            _starCounting = true;
+            _startCounting = true;
             _lastTime = Time.time;
         }
 
         void Update()
         {
-            if (_starCounting)
+            if (_startCounting)
             {
                 flag = true;
                 float presentTime = Time.time;
@@ -37,7 +37,7 @@ namespace Assets.Scripts
                 else if (timePace + timeLimitRange / 2 < timeDelta)
                 {
                     _lastTime = Time.time;
-                    //TimeNextCommand.Invoke(this, new EventArgs());
+                    TimeNextCommandEventHandler.Invoke(this, new EventArgs());
                     flag = false;
                 }
             }

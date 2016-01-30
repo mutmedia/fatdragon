@@ -39,24 +39,23 @@ public class CommandList : MonoBehaviour
 
     public void Compare(object sender, CommandEventArgs a)
     {
-        foreach (Player player in Players)
-        {
-            bool result = false;
-            Command command = (Command) a.Command;
-            Command item = (Command) List[CommandIndex];
-            if (command.Left == item.Left && command.Right == item.Right)
-            {
-                result = true;
-            }
+        var player = (Player) sender;
 
-            player.ResolveCommandResult(result);
-            if (ResolveCommandEventHandler != null)
+        bool result = false;
+        Command command = (Command)a.Command;
+        Command item = (Command)List[CommandIndex];
+        if (command.Left == item.Left && command.Right == item.Right)
+        {
+            result = true;
+        }
+
+        player.ResolveCommandResult(result);
+        if (ResolveCommandEventHandler != null)
+        {
+            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
             {
-                ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
-                {
-                    IsSuccessful = result,
-                });
-            }
+                IsSuccessful = result,
+            });
         }
     }
 
@@ -66,7 +65,7 @@ public class CommandList : MonoBehaviour
         List.Add(command);
     }
 
-    public void Next()
+    public void Next(object sender, EventArgs e)
     {
         CommandIndex++;
 

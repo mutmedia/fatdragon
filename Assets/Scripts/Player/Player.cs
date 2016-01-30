@@ -108,11 +108,11 @@ public class Player : MonoBehaviour, IControllable {
 
         if(didPlayerGetRight)
         {
-            Debug.Log("Success!");
+            //Debug.Log("Success!");
         }
         else
         {
-            Debug.Log("Fail!");
+            //Debug.Log("Fail!");
         }
     }
 

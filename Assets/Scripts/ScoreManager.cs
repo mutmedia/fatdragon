@@ -45,6 +45,7 @@ public class ScoreManager : MonoBehaviour
         if (e.IsSuccessful)
         {
             _currentStreak++;
+            Debug.Log("Current Streak Increased and is now " + _currentStreak);
         }
         else
         {
