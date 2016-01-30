@@ -24,6 +24,7 @@ class XBoxJoystickControl : IControl
     public static XBoxJoystickControl GetControl()
     {
         var joysticks = Input.GetJoystickNames();
+        Debug.Log(joysticks[0] + joysticks[0]);
         if ((indexCounter + 1) > joysticks.Length)
             return null;
 

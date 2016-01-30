@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < 4 && !noControlAvailable; i++)
         {
             var control = XBoxJoystickControl.GetControl();
+            Debug.Log("Controller " + i + " = " + control);
             if (control != null)
             {
                 var player = playerManager.CreatePlayer();
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour {
             else
             {
                 noControlAvailable = true;
+                
             }
         }
 
