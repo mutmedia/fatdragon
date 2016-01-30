@@ -43,7 +43,49 @@ public class Player : MonoBehaviour, IControllable {
 	    }
         
 	    _lastCommand = _command;
-	}
+        UpdateSprite();
+    }
+
+    void UpdateSprite()
+    {
+        string spriteName = "Idle";
+        bool flip = false;
+        
+        if (_command.Left == CommandType.up && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmUp";
+            flip = false;
+        } 
+        else if(_command.Left == CommandType.up && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmUp";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.left && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmLeft";
+            flip = false;
+        }
+        else if (_command.Left == CommandType.right && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmLeft";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.down && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmDown";
+            flip = false;
+        }
+        else if (_command.Left == CommandType.down && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmDown";
+            flip = true;
+        }
+
+        Sprite sprite = Resources.Load(spriteName, typeof(Sprite)) as Sprite;
+        this.GetComponent<SpriteRenderer>().sprite = sprite;
+        this.GetComponent<SpriteRenderer>().flipX = flip;
+    }
 
     public void ResolveCommandResult(bool result)
     {
