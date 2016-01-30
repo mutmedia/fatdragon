@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.Scripts.Enums
 {
-    enum CommandType
+    public enum CommandType
     {  
         up,
         down,
