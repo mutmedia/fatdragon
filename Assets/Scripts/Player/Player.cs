@@ -4,12 +4,16 @@ using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
 
-public class Player : MonoBehaviour, IControllable {
-    public class CommandEventArgs : EventArgs
-    {
-        public Command Command { get; set; }
-    }
+public class CommandEventArgs : EventArgs
+{
+    public Command Command { get; set; }
+}
 
+public class Player : MonoBehaviour, IControllable {
+
+    private bool _commandSuccess;
+    public float timeLimitRange;
+    private float _lastTime;
     private Command _command = new Command();
     private Command _lastCommand = new Command();
 
@@ -17,8 +21,8 @@ public class Player : MonoBehaviour, IControllable {
     
     // Use this for initialization
 	void Start () {
-	
-	}
+        _lastTime = -1;
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -35,6 +39,18 @@ public class Player : MonoBehaviour, IControllable {
 	    }
 	    _lastCommand = _command;
 	}
+
+    public void ResolveCommandResult(bool result)
+    {
+        if(result)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
