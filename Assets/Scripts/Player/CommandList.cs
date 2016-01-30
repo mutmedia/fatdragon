@@ -28,6 +28,7 @@ public class CommandList : MonoBehaviour
         Command newCommand = getRandomCommand();
         this.Add(newCommand);
         _updateCommandDemand = true;
+        Debug.Log(newCommand.Left + " " + newCommand.Right);
     }
 
     void Update()
