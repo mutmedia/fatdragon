@@ -19,14 +19,61 @@ public class CommandList : MonoBehaviour
     public EventHandler<ResolveCommandEventArgs> ResolveCommandEventHandler;
 
     private bool _isCurrentRunSuccessful;
+    private bool _updateCommandDemand;
 
-    public CommandList()
+    void Start()
     {
         List = new ArrayList();
         CommandIndex = -1;
         Command newCommand = getRandomCommand();
         this.Add(newCommand);
-        Debug.Log(newCommand.Left+" "+newCommand.Right);
+        _updateCommandDemand = true;
+    }
+
+    void Update()
+    {
+        if(_updateCommandDemand)
+        {
+            int i = 0;
+            foreach(Transform child in transform)
+            {
+                Command item = (Command)List[i++];
+                UpdateCommandSprite(child, item);
+            }
+            _updateCommandDemand = false;
+        }
+    }
+
+    void UpdateCommandSprite(Transform child, Command item)
+    {
+        float angleLeft = 0;
+        float angleRight = 0;
+        switch (item.Left)
+        {
+            case CommandType.down:
+                angleLeft = 180;
+                break;
+            case CommandType.left:
+                angleLeft = 90;
+                break;
+            case CommandType.right:
+                angleLeft = 270;
+                break;
+        }
+        switch (item.Right)
+        {
+            case CommandType.down:
+                angleRight = 180;
+                break;
+            case CommandType.left:
+                angleRight = 90;
+                break;
+            case CommandType.right:
+                angleRight = 270;
+                break;
+        }
+        child.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        child.GetChild(1).Rotate(new Vector3(0, 0, angleRight));
     }
 
     public Command getRandomCommand()
