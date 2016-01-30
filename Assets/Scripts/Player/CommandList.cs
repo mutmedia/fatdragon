@@ -1,31 +1,36 @@
 ﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Assets.Scripts.Player
-{
-    class CommandList
+
+    class CommandList : MonoBehaviour
     {
         int CommandIndex;
-        ArrayList List;
+        public ArrayList List;
 
-        public CommandList()
+        public Player player;
+
+        void Start()
         {
             List = new ArrayList();
             CommandIndex = -1;
+            player.CommandEventHandler += Compare;
         }
 
-        public bool Compare(object sender, EventArgs a)
+        public void Compare(object sender, CommandEventArgs a)
         {
             bool result = false;
+            Command command = (Command)a.Command;
             Command item = (Command)List[CommandIndex];
             if(command.Left == item.Left && command.Right == item.Right)
             {
                 result = true;
             }
-            return result;
+
+            player.CommandSuccess = result;
         }
 
         public void Add(Command command)
@@ -44,4 +49,3 @@ namespace Assets.Scripts.Player
             }
         }
     }
-}

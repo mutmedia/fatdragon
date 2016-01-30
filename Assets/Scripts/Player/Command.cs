@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.Scripts.Enums;
 
-namespace Assets.Scripts.Player
-{
+
     public class Command
     {
         public CommandType Left;
@@ -17,4 +16,3 @@ namespace Assets.Scripts.Player
             Right = right;
         }
     }
-}

@@ -3,14 +3,15 @@ using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
-using Assets.Scripts.Player;
+
+public class CommandEventArgs : EventArgs
+{
+    public Command Command { get; set; }
+}
 
 public class Player : MonoBehaviour, IControllable {
-    public class CommandEventArgs : EventArgs
-    {
-        public Command Command { get; set; }
-    }
 
+    public bool CommandSuccess;
     private Command _command = new Command();
     private Command _lastCommand = new Command();
 
@@ -28,9 +29,9 @@ public class Player : MonoBehaviour, IControllable {
 	    {
 	        if (CommandEventHandler != null)
 	        {
-	            CommandEventHandler.Invoke(new CommandEventArgs()
+	            CommandEventHandler.Invoke(this, new CommandEventArgs()
 	            {
-	                Command = _command;
+	                Command = _command,
 	            });
 	        }
 	    }
