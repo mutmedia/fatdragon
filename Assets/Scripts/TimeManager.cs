@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Assets.Scripts
 {
 
-    class TimeManager : MonoBehaviour
+    public class TimeManager : MonoBehaviour
     {
         public float timeLimitRange;
         public float timePace;

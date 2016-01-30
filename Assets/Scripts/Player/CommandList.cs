@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
+using Assets.Scripts;
 
 public class CommandList : MonoBehaviour
 {
     int CommandIndex;
     public ArrayList List;
     public List<Player> Players = new List<Player>();
+
+    public TimeManager timeManager;
 
     private System.Random _random = new System.Random();
     private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
@@ -42,6 +45,10 @@ public class CommandList : MonoBehaviour
                 UpdateCommandSprite(child, item);
             }
             _updateCommandDemand = false;
+        }
+        if(timeManager.flag)
+        {
+            
         }
     }
 
