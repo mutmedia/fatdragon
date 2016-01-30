@@ -26,7 +26,7 @@ public class ScoreManager : MonoBehaviour
 	    
 	}
 
-    void OnResolveCommand(object sende, ResolveCommandEventArgs e)
+    public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
     {
         if (e.IsSuccessful)
         {
@@ -40,7 +40,7 @@ public class ScoreManager : MonoBehaviour
         Debug.Log("SCORE: " + _score);
     }
 
-    void OnListOver(object sender, OnListOverEventArgs e)
+    public void OnListOver(object sender, OnListOverEventArgs e)
     {
         if (e.IsSuccessful)
         {
