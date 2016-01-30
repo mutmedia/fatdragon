@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         controllers = new List<IControl>();
 
+        CommandList = new CommandList();
+
         XBoxJoystickControl.Reset();
 
         var noControlAvailable = false;
@@ -40,6 +42,7 @@ public class GameManager : MonoBehaviour {
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
                     player.CommandEventHandler += OnNewPlayerCommand;
+                    CommandList.Add(player);
                 }
             }
             else

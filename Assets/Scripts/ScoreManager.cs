@@ -7,7 +7,7 @@ public class ScoreManager : MonoBehaviour
 
     private const int BaseScore = 100;
     
-    private int _highScore;
+    private int _score;
     private float _combo;
     private int _currentStreak = 0;
 
@@ -26,9 +26,18 @@ public class ScoreManager : MonoBehaviour
 	    
 	}
 
-    void OnCommandSuccessEvent()
+    void OnResolveCommand(object sende, ResolveCommandEventArgs e)
     {
-        _highScore += BaseScore + (int)_combo*BaseScore;
+        if (e.IsSuccessful)
+        {
+            _score += BaseScore + (int)_combo * BaseScore;
+        }
+        else
+        {
+            _combo = 0;
+        }
+        
+        Debug.Log("SCORE: " + _score);
     }
 
     void OnListOver(object sender, OnListOverEventArgs e)
