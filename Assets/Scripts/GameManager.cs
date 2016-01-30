@@ -10,9 +10,9 @@ public class GameManager : MonoBehaviour {
     public List<IControl> controllers;
     private PlayerManager playerManager;
     private ScoreManager scoreManager;
-    //private TimeManager timeManager;
+    private TimeManager timeManager;
 
-    public CommandList CommandList;
+    public CommandList TheCommandList;
 
     public GameState state = GameState.Playing;
     public GameState lastState;
@@ -21,12 +21,8 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
-        //timeManager = GetComponent<TimeManager>();
+        timeManager = GetComponent<TimeManager>();
         scoreManager = GetComponent<ScoreManager>();
-
-        
-
-        this.CommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
     }
 
 	// Use this for initialization
@@ -49,7 +45,7 @@ public class GameManager : MonoBehaviour {
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
                     player.CommandEventHandler += OnNewPlayerCommand;
-                    CommandList.Add(player);
+                    TheCommandList.Add(player);
                 }
             }
             else
@@ -60,6 +56,13 @@ public class GameManager : MonoBehaviour {
         }
         
         //More event Logic
+        TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
+        TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
+        timeManager.TimeNextCommandEventHandler += TheCommandList.Next;
+
+        // REMOVETHIS
+        timeManager.StartCounting();
+
 	}
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
