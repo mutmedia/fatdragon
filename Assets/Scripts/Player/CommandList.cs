@@ -6,7 +6,7 @@ using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
 
-class CommandList : MonoBehaviour
+public class CommandList : MonoBehaviour
     {
         int CommandIndex;
         public ArrayList List;

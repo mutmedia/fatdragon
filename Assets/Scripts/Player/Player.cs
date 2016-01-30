@@ -33,14 +33,17 @@ public class Player : MonoBehaviour, IControllable {
         if (inputChanged)
         {
             inputChanged = false;
-            if (CommandEventHandler != null)
-	        {
-	            CommandEventHandler.Invoke(this, new CommandEventArgs()
-	            {
-	                Command = _command,
-	            });
-	        }
-	    }
+            if (_command.Right != CommandType.none && _command.Left != CommandType.none)
+            {
+                if (CommandEventHandler != null)
+                {
+                    CommandEventHandler.Invoke(this, new CommandEventArgs()
+                    {
+                        Command = _command,
+                    });
+                }
+            }
+        }
         
 	    _lastCommand = _command;
         UpdateSprite();

@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
     public List<IControl> controllers;
     private PlayerManager playerManager;
 
+    public CommandList CommandList;
+
     public GameState state = GameState.Playing;
     public GameState lastState;
     private float unpauseTime;
@@ -29,7 +31,6 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < 4 && !noControlAvailable; i++)
         {
             var control = XBoxJoystickControl.GetControl();
-            Debug.Log("Controller " + i + " = " + control);
             if (control != null)
             {
                 var player = playerManager.CreatePlayer();
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour {
                     control.SetControllable(player);
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
+                    player.CommandEventHandler += OnNewPlayerCommand;
                 }
             }
             else
@@ -86,4 +88,12 @@ public class GameManager : MonoBehaviour {
             c.Update(state);
         }
 	}
+
+    private int commandsSent = 0;
+    void OnNewPlayerCommand(object sender, CommandEventArgs e)
+    {
+        Debug.Log(commandsSent + ":Player just sent the command " + e.Command.Left + " - " + e.Command.Right);
+
+        commandsSent++;
+    }
 }
