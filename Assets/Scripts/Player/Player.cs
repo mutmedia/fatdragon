@@ -39,7 +39,24 @@ public class Player : MonoBehaviour, IControllable {
 	        }
 	    }
 	    _lastCommand = _command;
-	}
+        UpdateSprite();
+    }
+
+    void UpdateSprite()
+    {
+        string spriteName = "Idle";
+        if(_command.Left == CommandType.up && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmUp";
+        } 
+        else if(_command.Left == CommandType.up && _command.Right == CommandType.right)
+        {
+            spriteName = "RightArmUp";
+        }
+
+        Sprite sprite = Resources.Load(spriteName, typeof(Sprite)) as Sprite;
+        this.GetComponent<SpriteRenderer>().sprite = sprite;
+    }
 
     public void ResolveCommandResult(bool result)
     {
