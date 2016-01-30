@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour {
 
     public List<IControl> controllers;
     private PlayerManager playerManager;
-    private TimeManager timeManager;
+    private ScoreManager scoreManager;
+    //private TimeManager timeManager;
 
     public CommandList CommandList;
 
@@ -20,14 +21,17 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
-        timeManager = GetComponent<TimeManager>();
+        //timeManager = GetComponent<TimeManager>();
+        scoreManager = GetComponent<ScoreManager>();
+
+        
+
+        this.CommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
     }
 
 	// Use this for initialization
 	void Start () {
         controllers = new List<IControl>();
-
-        CommandList = new CommandList();
 
         XBoxJoystickControl.Reset();
 
@@ -54,9 +58,8 @@ public class GameManager : MonoBehaviour {
                 
             }
         }
-
-        //Monster logic
-        int numberOfControllers = Input.GetJoystickNames().Length;
+        
+        //More event Logic
 	}
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
@@ -98,7 +101,7 @@ public class GameManager : MonoBehaviour {
     private int commandsSent = 0;
     void OnNewPlayerCommand(object sender, CommandEventArgs e)
     {
-        Debug.Log(commandsSent + ":Player just sent the command " + e.Command.Left + " - " + e.Command.Right);
+        //Debug.Log(commandsSent + ":Player just sent the command " + e.Command.Left + " - " + e.Command.Right);
 
         commandsSent++;
     }

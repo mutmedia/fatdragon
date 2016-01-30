@@ -6,7 +6,7 @@ using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
 
-public class CommandList 
+public class CommandList : MonoBehaviour
 {
     int CommandIndex;
     public ArrayList List;
@@ -14,6 +14,11 @@ public class CommandList
 
     private System.Random _random = new System.Random();
     private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+
+    public EventHandler<OnListOverEventArgs> OnListOverEventHandler;
+    public EventHandler<ResolveCommandEventArgs> ResolveCommandEventHandler;
+
+    private bool _isCurrentRunSuccessful;
 
     public CommandList()
     {
@@ -34,31 +39,31 @@ public class CommandList
 
     public void Compare(object sender, CommandEventArgs a)
     {
-        foreach(Player player in Players)
+        foreach (Player player in Players)
         {
             bool result = false;
-            Command command = (Command)a.Command;
-            Command item = (Command)List[CommandIndex];
+            Command command = (Command) a.Command;
+            Command item = (Command) List[CommandIndex];
             if (command.Left == item.Left && command.Right == item.Right)
             {
                 result = true;
             }
 
             player.ResolveCommandResult(result);
+            if (ResolveCommandEventHandler != null)
+            {
+                ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+                {
+                    IsSuccessful = result,
+                });
+            }
         }
-
     }
 
     public void Add(Command command)
     {
         CommandIndex++;
         List.Add(command);
-    }
-
-    public void Add(Player player)
-    {
-        Players.Add(player);
-        player.CommandEventHandler += Compare;
     }
 
     public void Next()
@@ -68,6 +73,32 @@ public class CommandList
         if (CommandIndex >= List.Count)
         {
             CommandIndex = 0;
+            if (OnListOverEventHandler != null)
+            {
+                OnListOverEventHandler.Invoke(this, new OnListOverEventArgs()
+                {
+                    IsSuccessful = _isCurrentRunSuccessful,
+                } );
+            }
+            _isCurrentRunSuccessful = true;
         }
     }
+
+    public void Add(Player player)
+    {
+        Players.Add(player);
+        player.CommandEventHandler += Compare;
+    }
+
+}
+
+public class ResolveCommandEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
+}
+
+
+public class OnListOverEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
 }
