@@ -22,7 +22,7 @@ public class Player : MonoBehaviour, IControllable {
     
     // Use this for initialization
 	void Start () {
-        _lastTime = -1;
+        _lastTime = Time.time;
     }
 	
 	// Update is called once per frame
@@ -52,6 +52,7 @@ public class Player : MonoBehaviour, IControllable {
             {
                 didPlayerGetRight = true;
             }
+            _lastTime = actualTime;
         }
 
         if(didPlayerGetRight)
