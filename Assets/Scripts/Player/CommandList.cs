@@ -7,56 +7,80 @@ using System.Collections;
 using Assets.Scripts.Enums;
 
 public class CommandList : MonoBehaviour
+{
+    private int CommandIndex;
+    public ArrayList List;
+
+    private System.Random _random = new System.Random();
+    private Array _valuesCommandTypes = Enum.GetValues(typeof (CommandType));
+
+    public Player player;
+
+    private bool _isCurrentRunSuccessful;
+
+    public EventHandler<OnListOverEventArgs> OnListOverEventHandler;
+    public EventHandler<ResolveCommandEventArgs> ResolveCommandEventHandler;
+
+    private void Start()
     {
-        int CommandIndex;
-        public ArrayList List;
+        List = new ArrayList();
+        CommandIndex = -1;
+        player.CommandEventHandler += Compare;
+        this.Add(this.getRandomCommand());
+    }
 
-        private System.Random _random = new System.Random();
-        private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+    public Command getRandomCommand()
+    {
+        CommandType randomRight = (CommandType) _valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
+        CommandType randomLeft = (CommandType) _valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
+        return new Command(randomLeft, randomRight);
+    }
 
-        public Player player;
-
-        void Start()
+    public void Compare(object sender, CommandEventArgs a)
+    {
+        bool result = false;
+        Command command = (Command) a.Command;
+        Command item = (Command) List[CommandIndex];
+        if (command.Left == item.Left && command.Right == item.Right)
         {
-            List = new ArrayList();
-            CommandIndex = -1;
-            player.CommandEventHandler += Compare;
-            this.Add(this.getRandomCommand());
+            result = true;
         }
 
-        public Command getRandomCommand()
-        {
-            CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            return new Command(randomLeft, randomRight);
-        }
+        player.ResolveCommandResult(result);
+    }
 
-        public void Compare(object sender, CommandEventArgs a)
+    public void Add(Command command)
+    {
+        CommandIndex++;
+        List.Add(command);
+    }
+
+    public void Next()
+    {
+        CommandIndex++;
+
+        if (CommandIndex >= List.Count)
         {
-            bool result = false;
-            Command command = (Command)a.Command;
-            Command item = (Command)List[CommandIndex];
-            if(command.Left == item.Left && command.Right == item.Right)
+            CommandIndex = 0;
+            if (OnListOverEventHandler != null)
             {
-                result = true;
+                OnListOverEventHandler.Invoke(this, new OnListOverEventArgs()
+                {
+                    IsSuccessful = _isCurrentRunSuccessful,
+                } );
             }
-
-            player.ResolveCommandResult(result);
-        }
-
-        public void Add(Command command)
-        {
-            CommandIndex++;
-            List.Add(command);
-        }
-
-        public void Next()
-        {
-            CommandIndex++;
-     
-            if(CommandIndex >= List.Count)
-            {
-                CommandIndex = 0;
-            }
+            _isCurrentRunSuccessful = true;
         }
     }
+}
+
+public class ResolveCommandEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
+}
+
+
+public class OnListOverEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
+}
