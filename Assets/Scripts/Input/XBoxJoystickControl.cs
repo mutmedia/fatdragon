@@ -53,43 +53,47 @@ class XBoxJoystickControl : IControl
 
         if (y > deadzone)
         {
-            controllable.LeftSideUp(state);
+            controllable.MoveLeftSide(CommandType.down, state);
+        }
+        else if (y < -deadzone)
+        {
+            controllable.MoveLeftSide(CommandType.up, state);
+        }
+        else if (x < -deadzone)
+        {
+            controllable.MoveLeftSide(CommandType.left, state);
+        }
+        else if (x > deadzone)
+        {
+            controllable.MoveLeftSide(CommandType.right, state);
+        }
+        else
+        {
+            controllable.MoveLeftSide(CommandType.none, state);
         }
 
-        if (y < -deadzone)
+        if (Input.GetButton("Joystick" + index + "Button1"))
         {
-            controllable.LeftSideDown(state);
+            controllable.MoveRightSide(CommandType.right, state);
+        }
+        else if (Input.GetButton("Joystick" + index + "Button2"))
+        {
+            controllable.MoveRightSide(CommandType.left, state);
+        }
+        else if (Input.GetButton("Joystick" + index + "Button3"))
+        {
+            controllable.MoveRightSide(CommandType.up, state);
+        }
+        else if (Input.GetButton("Joystick" + index + "Button0"))
+        {
+            controllable.MoveRightSide(CommandType.down, state);
+        }
+        else
+        {
+            controllable.MoveRightSide(CommandType.none, state);
         }
 
-        if (x > deadzone)
-        {
-            controllable.LeftSideRight(state);
-        }
-
-        if (x < -deadzone)
-        {
-            controllable.LeftSideLeft(state);
-        }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire0") > triggerThreshold)
-        {
-            controllable.RightSideUp(state);
-        }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire1") > triggerThreshold)
-        {
-            controllable.RightSideDown(state);
-        }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire2") > triggerThreshold)
-        {
-            controllable.RightSideLeft(state);
-        }
-
-        if (Input.GetAxisRaw("Joystick" + index + "Fire3") > triggerThreshold)
-        {
-            controllable.RightSideRight(state);
-        }
+        
 
         if (Input.GetButton("Start"))
         {

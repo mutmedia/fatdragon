@@ -24,13 +24,16 @@ public class Player : MonoBehaviour, IControllable {
 	void Start () {
         _lastTime = Time.time;
     }
-	
+
+
+    private bool inputChanged;
 	// Update is called once per frame
 	void Update ()
 	{
-	    if (_lastCommand != _command)
-	    {
-	        if (CommandEventHandler != null)
+        if (inputChanged)
+        {
+            inputChanged = false;
+            if (CommandEventHandler != null)
 	        {
 	            CommandEventHandler.Invoke(this, new CommandEventArgs()
 	            {
@@ -38,6 +41,7 @@ public class Player : MonoBehaviour, IControllable {
 	            });
 	        }
 	    }
+        
 	    _lastCommand = _command;
         UpdateSprite();
     }
@@ -109,11 +113,26 @@ public class Player : MonoBehaviour, IControllable {
 
     public void MoveLeftSide(CommandType command, GameState state)
     {
+        if (_lastCommand.Left == command) return;
         _command.Left = command;
+        inputChanged = true;
     }
 
     public void MoveRightSide(CommandType command, GameState state)
     {
+        if (_lastCommand.Right == command) return;
         _command.Right = command;
+        inputChanged = true;
+    }
+
+    internal static Player Create(Vector3 initialPos)
+    {
+        var playerPrefab = Resources.Load<Player>("Prefabs/Player");
+
+        var player = Instantiate<Player>(playerPrefab);
+        player.transform.position = initialPos;
+
+
+        return player;
     }
 }
