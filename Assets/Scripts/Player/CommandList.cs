@@ -54,7 +54,7 @@ public class CommandList : MonoBehaviour
         {
             ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
             {
-                IsSuccessful = result,
+                IsCorrect = result,
             });
         }
     }
@@ -93,7 +93,7 @@ public class CommandList : MonoBehaviour
 
 public class ResolveCommandEventArgs : EventArgs
 {
-    public bool IsSuccessful { get; set; }
+    public bool IsCorrect { get; set; }
 }
 
 

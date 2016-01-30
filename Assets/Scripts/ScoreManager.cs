@@ -28,7 +28,7 @@ public class ScoreManager : MonoBehaviour
 
     public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
     {
-        if (e.IsSuccessful)
+        if (e.IsCorrect)
         {
             _score += BaseScore + (int)_combo * BaseScore;
         }
