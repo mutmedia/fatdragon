@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour {
         playerManager = GetComponent<PlayerManager>();
         timeManager = GetComponent<TimeManager>();
         scoreManager = GetComponent<ScoreManager>();
+        TheCommandList.timeManager = timeManager;
     }
 
 	// Use this for initialization
