@@ -3,11 +3,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Enums;
+using Assets.Scripts;
 
 public class GameManager : MonoBehaviour {
 
     public List<IControl> controllers;
     private PlayerManager playerManager;
+    private TimeManager timeManager;
 
     public CommandList CommandList;
 
@@ -18,6 +20,7 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
+        timeManager = GetComponent<TimeManager>();
     }
 
 	// Use this for initialization
