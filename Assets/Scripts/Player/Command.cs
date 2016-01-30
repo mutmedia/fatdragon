@@ -6,7 +6,7 @@ using Assets.Scripts.Enums;
 
 namespace Assets.Scripts.Player
 {
-    class Command
+    public class Command
     {
         public CommandType Left;
         public CommandType Right;
