@@ -14,11 +14,12 @@ public class GameManager : MonoBehaviour {
     private SoundManager soundManager;
 
     public Animator DragonAnimator;
-    public Animator FirebreathAnimator;
+    public GameObject FirebreathAnimator;
 
 
     public int life = 3;
-    public int misses = 0;
+    public int missMaxNumber = 5;
+    private int misses = 0;
 
     public CommandList TheCommandList;
 
@@ -83,7 +84,7 @@ public class GameManager : MonoBehaviour {
         if (!e.IsCorrect)
         {
             misses++;
-            if (misses >= 5)
+            if (misses >= missMaxNumber)
             {
                 misses = 0;
                 life--;
@@ -91,7 +92,7 @@ public class GameManager : MonoBehaviour {
                 switch(life)
                 {
                     case 2:
-                        //DragonAnimator.SetTrigger("PlayerMissesGurgle");
+                        DragonAnimator.SetTrigger("PlayerMissesGurgle");
                         Debug.Log("Life " + life);
                         break;
                     case 1:
@@ -99,8 +100,10 @@ public class GameManager : MonoBehaviour {
                         Debug.Log("Life " + life);
                         break;
                     case 0:
-                        //DragonAnimator.SetTrigger("PlayerFire");
+                        DragonAnimator.SetTrigger("PlayerDies");
+                        //FirebreathAnimator.SetActive(true);
                         Debug.Log("Dead! ");
+                        life = 3;
                         break;
                 }
             }

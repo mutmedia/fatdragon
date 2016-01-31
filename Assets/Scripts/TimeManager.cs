@@ -9,8 +9,8 @@ namespace Assets.Scripts
 
     public class TimeManager : MonoBehaviour
     {
-        public float timeLimitRange;
-        public float timePace;
+        public float timeLimitRange = 0.05f;
+        public float timePace = 0.444f;
         public bool flag = false;
         private bool _startCounting;
         private float _lastTime;
@@ -27,7 +27,7 @@ namespace Assets.Scripts
             _lastTime = Time.time;
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (_startCounting)
             {
@@ -44,7 +44,7 @@ namespace Assets.Scripts
                     flag = false;
                 }
 
-                if (timeDelta - timePace > -0.01 && timeDelta - timePace < 0.01)
+                if (timeDelta - timePace > -0.02 && timeDelta - timePace < 0.02)
                 {
                     _lastTime = Time.time - (timeDelta - timePace);
                     TimeNextCommandEventHandler.Invoke(this, new EventArgs());
