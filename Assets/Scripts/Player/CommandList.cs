@@ -5,58 +5,198 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
+using Assets.Scripts;
 
-class CommandList : MonoBehaviour
+public class CommandList : MonoBehaviour
+{
+    int CommandIndex;
+    public ArrayList List;
+    public List<Player> Players = new List<Player>();
+
+    public TimeManager timeManager;
+
+    private System.Random _random = new System.Random();
+    private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+
+    public EventHandler<OnListOverEventArgs> OnListOverEventHandler;
+    public EventHandler<ResolveCommandEventArgs> ResolveCommandEventHandler;
+
+    private bool _isCurrentRunSuccessful;
+    private bool _updateCommandDemand;
+    private bool _currentResult;
+
+    void Start()
     {
-        int CommandIndex;
-        public ArrayList List;
+        List = new ArrayList();
+        CommandIndex = -1;
 
-        private System.Random _random = new System.Random();
-        private Array _valuesCommandTypes = Enum.GetValues(typeof(CommandType));
+        Command newCommand1 = getRandomCommand();
+        this.Add(newCommand1);
+        Debug.Log(newCommand1.Left + " " + newCommand1.Right);
 
-        public Player player;
+        Command newCommand2 = getRandomCommand();
+        this.Add(newCommand2);
+        Debug.Log(newCommand2.Left + " " + newCommand2.Right);
 
-        void Start()
+        Command newCommand3 = getRandomCommand();
+        this.Add(newCommand3);
+        Debug.Log(newCommand3.Left + " " + newCommand2.Right);
+
+        CommandIndex = 0;
+
+        _updateCommandDemand = true;
+    }
+
+    void Update()
+    {
+        if (_updateCommandDemand)
         {
-            List = new ArrayList();
-            CommandIndex = -1;
-            player.CommandEventHandler += Compare;
-            this.Add(this.getRandomCommand());
-        }
-
-        public Command getRandomCommand()
-        {
-            CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(_valuesCommandTypes.Length));
-            return new Command(randomLeft, randomRight);
-        }
-
-        public void Compare(object sender, CommandEventArgs a)
-        {
-            bool result = false;
-            Command command = (Command)a.Command;
-            Command item = (Command)List[CommandIndex];
-            if(command.Left == item.Left && command.Right == item.Right)
+            int i = 0;
+            foreach (Transform child in transform)
             {
-                result = true;
+                Command item = (Command)List[i++];
+                UpdateCommandSprite(child, item);
             }
-
-            player.ResolveCommandResult(result);
+            _updateCommandDemand = false;
         }
-
-        public void Add(Command command)
+        foreach (Transform child in transform)
         {
-            CommandIndex++;
-            List.Add(command);
+            UpdateUnflashSprite(child);
         }
-
-        public void Next()
+        if(timeManager.flag)
         {
-            CommandIndex++;
-     
-            if(CommandIndex >= List.Count)
-            {
-                CommandIndex = 0;
-            }
+            UpdateFlashSprite(transform.GetChild(CommandIndex));
         }
     }
+
+    void UpdateFlashSprite(Transform child)
+    {
+        child.GetChild(0).GetComponent<SpriteRenderer>().color = Color.yellow;
+        child.GetChild(1).GetComponent<SpriteRenderer>().color = Color.yellow;
+    }
+
+    void UpdateUnflashSprite(Transform child)
+    {
+        child.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+        child.GetChild(1).GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    void UpdateCommandSprite(Transform child, Command item)
+    {
+        float angleLeft = 0;
+        float angleRight = 0;
+        switch (item.Left)
+        {
+            case CommandType.down:
+                angleLeft = 180;
+                break;
+            case CommandType.left:
+                angleLeft = 90;
+                break;
+            case CommandType.right:
+                angleLeft = 270;
+                break;
+        }
+        switch (item.Right)
+        {
+            case CommandType.down:
+                angleRight = 180;
+                break;
+            case CommandType.left:
+                angleRight = 90;
+                break;
+            case CommandType.right:
+                angleRight = 270;
+                break;
+        }
+        child.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+
+        Sprite sprite = Resources.Load<Sprite>("Sprites/Button" + angleRight);
+        child.GetChild(1).GetComponent<SpriteRenderer>().sprite = sprite;
+    }
+
+    public Command getRandomCommand()
+    {
+        int Length = _valuesCommandTypes.Length - 1;
+        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
+        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
+        return new Command(randomLeft, randomRight);
+    }
+
+    public void Compare(object sender, CommandEventArgs a)
+    {
+        var player = (Player) sender;
+
+        bool result = false;
+        Command command = (Command)a.Command;
+        Command item = (Command)List[CommandIndex];
+        if (command.Left == item.Left && command.Right == item.Right)
+        {
+            result = true;
+        }
+
+        if (result && !timeManager.flag)
+        {
+            result = false;
+        }
+
+        _currentResult = result;
+
+        if (ResolveCommandEventHandler != null)
+        {
+            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+            {
+                IsCorrect = result,
+            });
+        }
+    }
+
+    public void OnTimerChangeEvent(object sender, EventArgs e)
+    {
+        _isCurrentRunSuccessful = _currentResult;
+        Next();
+        _isCurrentRunSuccessful = false;
+    }
+
+    public void Add(Command command)
+    {
+        List.Add(command);
+    }
+
+    public void Next()
+    {
+        CommandIndex++;
+
+        if (CommandIndex >= List.Count)
+        {
+            CommandIndex = 0;
+            if (OnListOverEventHandler != null)
+            {
+                OnListOverEventHandler.Invoke(this, new OnListOverEventArgs()
+                {
+                    IsSuccessful = _isCurrentRunSuccessful,
+                } );
+            }
+            _isCurrentRunSuccessful = true;
+        }
+    }
+
+    public void Add(Player player)
+    {
+        Players.Add(player);
+        player.CommandEventHandler += Compare;
+    }
+
+}
+
+public class ResolveCommandEventArgs : EventArgs
+{
+    public bool IsCorrect { get; set; }
+    public Player ResolvingPlayer { get; set; }
+}
+
+
+public class OnListOverEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
+}

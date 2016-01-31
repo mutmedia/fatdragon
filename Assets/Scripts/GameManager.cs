@@ -3,11 +3,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Enums;
+using Assets.Scripts;
 
 public class GameManager : MonoBehaviour {
 
     public List<IControl> controllers;
     private PlayerManager playerManager;
+    private ScoreManager scoreManager;
+    private TimeManager timeManager;
+
+    public CommandList TheCommandList;
 
     public GameState state = GameState.Playing;
     public GameState lastState;
@@ -16,6 +21,9 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
+        timeManager = GetComponent<TimeManager>();
+        scoreManager = GetComponent<ScoreManager>();
+        TheCommandList.timeManager = timeManager;
     }
 
 	// Use this for initialization
@@ -37,16 +45,25 @@ public class GameManager : MonoBehaviour {
                     control.SetControllable(player);
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
+                    player.CommandEventHandler += OnNewPlayerCommand;
+                    TheCommandList.Add(player);
                 }
             }
             else
             {
                 noControlAvailable = true;
+                
             }
         }
+        
+        //More event Logic
+        TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
+        TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
+        timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
 
-        //Monster logic
-        int numberOfControllers = Input.GetJoystickNames().Length;
+        // REMOVETHIS
+        timeManager.StartCounting();
+
 	}
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
@@ -84,4 +101,12 @@ public class GameManager : MonoBehaviour {
             c.Update(state);
         }
 	}
+
+    private int commandsSent = 0;
+    void OnNewPlayerCommand(object sender, CommandEventArgs e)
+    {
+        //Debug.Log(commandsSent + ":Player just sent the command " + e.Command.Left + " - " + e.Command.Right);
+
+        commandsSent++;
+    }
 }

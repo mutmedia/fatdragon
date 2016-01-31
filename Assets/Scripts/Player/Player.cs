@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
+using Assets.Scripts;
 
 public class CommandEventArgs : EventArgs
 {
@@ -12,8 +13,7 @@ public class CommandEventArgs : EventArgs
 public class Player : MonoBehaviour, IControllable {
 
     private bool _commandSuccess;
-    public float timeLimitRange;
-    public float timePace;
+
     private float _lastTime;
     private Command _command = new Command();
     private Command _lastCommand = new Command();
@@ -33,14 +33,17 @@ public class Player : MonoBehaviour, IControllable {
         if (inputChanged)
         {
             inputChanged = false;
-            if (CommandEventHandler != null)
-	        {
-	            CommandEventHandler.Invoke(this, new CommandEventArgs()
-	            {
-	                Command = _command,
-	            });
-	        }
-	    }
+            if (_command.Right != CommandType.none && _command.Left != CommandType.none)
+            {
+                if (CommandEventHandler != null)
+                {
+                    CommandEventHandler.Invoke(this, new CommandEventArgs()
+                    {
+                        Command = _command,
+                    });
+                }
+            }
+        }
         
 	    _lastCommand = _command;
         UpdateSprite();
@@ -50,6 +53,7 @@ public class Player : MonoBehaviour, IControllable {
     {
         string spriteName = "Idle";
         bool flip = false;
+
         
         if (_command.Left == CommandType.up && _command.Right == CommandType.down)
         {
@@ -81,34 +85,45 @@ public class Player : MonoBehaviour, IControllable {
             spriteName = "LeftArmDown";
             flip = true;
         }
+        else if (_command.Left == CommandType.right && _command.Right == CommandType.down)
+        {
+            spriteName = "LeftArmLeft";
+            flip = true;
+        }
+        else if (_command.Left == CommandType.left && _command.Right == CommandType.right)
+        {
+            spriteName = "LeftArmLeft";
+        }
 
-        Sprite sprite = Resources.Load(spriteName, typeof(Sprite)) as Sprite;
-        this.GetComponent<SpriteRenderer>().sprite = sprite;
-        this.GetComponent<SpriteRenderer>().flipX = flip;
+        Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
+        GetComponent<SpriteRenderer>().sprite = sprite;
+        GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
+        GetComponent<SpriteRenderer>().transform.localScale = new Vector3(flip ? -1 : 1, 1, 1);
     }
 
     public void ResolveCommandResult(bool result)
     {
-        float actualTime = Time.time;
-        bool didPlayerGetRight = false;
-        if(result)
-        {
-            float timeDelta = actualTime - _lastTime;
-            if(timePace - timeLimitRange/2 <= timeDelta && timeDelta <= timePace + timeLimitRange / 2)
-            {
-                didPlayerGetRight = true;
-            }
-            _lastTime = actualTime;
-        }
+        
+        bool didPlayerGetRight = result;
 
         if(didPlayerGetRight)
         {
-            Debug.Log("Success!");
+            //Debug.Log("Success!");
         }
         else
         {
-            Debug.Log("Fail!");
+            //Debug.Log("Fail!");
         }
+    }
+
+    public void OnTimeSucessEvent(object sender, EventArgs e)
+    {
+
+    }
+
+    public void OnTimeFailEvent(object sender, EventArgs e)
+    {
+
     }
 
     public void MoveLeftSide(CommandType command, GameState state)
@@ -125,14 +140,17 @@ public class Player : MonoBehaviour, IControllable {
         inputChanged = true;
     }
 
-    internal static Player Create(Vector3 initialPos)
+    internal static Player Create(Vector3 initialPos, int index)
     {
         var playerPrefab = Resources.Load<Player>("Prefabs/Player");
 
         var player = Instantiate<Player>(playerPrefab);
         player.transform.position = initialPos;
+        player.Number = index;
 
 
         return player;
     }
+
+    public int Number { get; set; }
 }
