@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -8,8 +10,11 @@ public class ScoreManager : MonoBehaviour
     private const int BaseScore = 100;
     
     private int _score;
-    private float _combo;
+    private decimal _combo;
     private int _currentStreak = 0;
+
+    public Text ScoreText;
+    public Text ComboText;
 
 
     
@@ -21,9 +26,9 @@ public class ScoreManager : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
-    {
-	    
+	void Update ()
+	{
+
 	}
 
     public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
@@ -31,6 +36,7 @@ public class ScoreManager : MonoBehaviour
         if (e.IsCorrect)
         {
             _score += BaseScore + (int)_combo * BaseScore;
+            ScoreText.text = "Score: " + _score;
         }
         else
         {
@@ -45,12 +51,14 @@ public class ScoreManager : MonoBehaviour
         if (e.IsSuccessful)
         {
             _currentStreak++;
-            Debug.Log("Current Streak Increased and is now " + _currentStreak);
         }
         else
         {
             _currentStreak = 0;
+
         }
-        _combo = (10 + _currentStreak)/10;
+        _combo = (10 + new decimal(_currentStreak))/10;
+        Debug.Log("Current combo is now " + _combo);
+        ComboText.text = "x " + String.Format("{0:0.0}", _combo);
     }
 }
