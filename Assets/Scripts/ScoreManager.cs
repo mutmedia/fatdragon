@@ -9,7 +9,7 @@ public class ScoreManager : MonoBehaviour
 
     private const int BaseScore = 100;
     
-    private int _score;
+    public int _score;
     private decimal _combo;
     private int _currentStreak = 0;
 

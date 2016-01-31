@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Enums;
 using Assets.Scripts;
+using UnityEngine.UI;
 
 public class EndGameEventArgs : EventArgs
 {
@@ -17,6 +18,10 @@ public class GameManager : MonoBehaviour {
     private ScoreManager scoreManager;
     private TimeManager timeManager;
     private SoundManager soundManager;
+
+    public Transform highscorePanel;
+
+    public Text playerScore;
 
     public Animator DragonAnimator;
     public GameObject FirebreathAnimator;
@@ -52,6 +57,15 @@ public class GameManager : MonoBehaviour {
         }
 
         highscore.Add(BasePoints*10);
+
+        playerScore.text = scoreManager._score.ToString();
+
+        i = 0;
+        foreach(Transform child in highscorePanel)
+        {
+            child.GetChild(0).GetComponent<Text>().text = highscore[i].ToString();
+            i++;
+        }
     }
 
     void Awake()
