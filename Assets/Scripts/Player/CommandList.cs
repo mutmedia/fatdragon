@@ -23,6 +23,7 @@ public class CommandList : MonoBehaviour
 
     private bool _isCurrentRunSuccessful;
     private bool _updateCommandDemand;
+    private bool _currentResult;
 
     void Start()
     {
@@ -134,14 +135,27 @@ public class CommandList : MonoBehaviour
             result = true;
         }
 
-        player.ResolveCommandResult(result);
+        if (result && !timeManager.flag)
+        {
+            result = false;
+        }
+
+        _currentResult = result;
+
         if (ResolveCommandEventHandler != null)
         {
             ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
             {
-                IsSuccessful = result,
+                IsCorrect = result,
             });
         }
+    }
+
+    public void OnTimerChangeEvent(object sender, EventArgs e)
+    {
+        _isCurrentRunSuccessful = _currentResult;
+        Next();
+        _isCurrentRunSuccessful = false;
     }
 
     public void Add(Command command)
@@ -149,7 +163,7 @@ public class CommandList : MonoBehaviour
         List.Add(command);
     }
 
-    public void Next(object sender, EventArgs e)
+    public void Next()
     {
         CommandIndex++;
 
@@ -177,7 +191,8 @@ public class CommandList : MonoBehaviour
 
 public class ResolveCommandEventArgs : EventArgs
 {
-    public bool IsSuccessful { get; set; }
+    public bool IsCorrect { get; set; }
+    public Player ResolvingPlayer { get; set; }
 }
 
 
