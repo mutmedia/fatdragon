@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour {
     private TimeManager timeManager;
     private SoundManager soundManager;
 
+    public Animator DragonAnimator;
+    public Animator FirebreathAnimator;
+
 
     public int life = 3;
     public int misses = 0;
@@ -88,12 +91,15 @@ public class GameManager : MonoBehaviour {
                 switch(life)
                 {
                     case 2:
+                        //DragonAnimator.SetTrigger("PlayerMissesGurgle");
                         Debug.Log("Life " + life);
                         break;
                     case 1:
+                        //DragonAnimator.SetTrigger("PlayerMissesSmoke");
                         Debug.Log("Life " + life);
                         break;
                     case 0:
+                        //DragonAnimator.SetTrigger("PlayerFire");
                         Debug.Log("Dead! ");
                         break;
                 }
