@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour {
     public GameObject highscorePanel;
 
     public Animator DragonAnimator;
-    public GameObject FirebreathAnimator;
 
     public List<int> highscore;
 
@@ -138,15 +137,15 @@ public class GameManager : MonoBehaviour {
                 switch(life)
                 {
                     case 2:
-                        //DragonAnimator.SetTrigger("PlayerMissesGurgle");
+                        DragonAnimator.SetTrigger("PlayerMisses");
                         Debug.Log("Life " + life);
                         break;
                     case 1:
-                        DragonAnimator.SetTrigger("PlayerMissesSmoke");
+                        DragonAnimator.SetTrigger("PlayerMissesSmokes");
                         Debug.Log("Life " + life);
                         break;
                     case 0:
-                        //DragonAnimator.SetTrigger("PlayerDies");
+                        DragonAnimator.SetTrigger("PlayerDies");
                         //FirebreathAnimator.SetActive(true);
                         timeManager.StopCounting();
                         Debug.Log("Dead! ");
