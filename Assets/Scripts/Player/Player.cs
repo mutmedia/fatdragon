@@ -19,9 +19,10 @@ public class Player : MonoBehaviour, IControllable {
     private Command _lastCommand = new Command();
 
     public event EventHandler<CommandEventArgs> CommandEventHandler;
-    
+    public EventHandler<EventArgs> EndAnimationFinishedEventHandler;
+
     // Use this for initialization
-	void Start () {
+    void Start () {
         _lastTime = Time.time;
     }
 
@@ -62,6 +63,10 @@ public class Player : MonoBehaviour, IControllable {
                 Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
                 GetComponent<SpriteRenderer>().sprite = sprite;
                 resolveDeathSprite = false;
+                if (EndAnimationFinishedEventHandler != null)
+                {
+                    EndAnimationFinishedEventHandler.Invoke(this, new EventArgs());
+                }
             }
                
         }
