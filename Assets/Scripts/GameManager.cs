@@ -13,6 +13,10 @@ public class GameManager : MonoBehaviour {
     private TimeManager timeManager;
     private SoundManager soundManager;
 
+
+    public int life = 3;
+    public int misses = 0;
+
     public CommandList TheCommandList;
 
     public GameState state = GameState.Playing;
@@ -60,6 +64,7 @@ public class GameManager : MonoBehaviour {
         
         //More event Logic
         TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
+        TheCommandList.ResolveCommandEventHandler += OnResolveCommand ;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
         // REMOVETHIS
@@ -69,6 +74,33 @@ public class GameManager : MonoBehaviour {
 	    TheCommandList.ResolveCommandEventHandler += soundManager.OnMistake;
 
 	}
+
+    public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
+    {
+        if (!e.IsCorrect)
+        {
+            misses++;
+            if (misses >= 5)
+            {
+                misses = 0;
+                life--;
+
+                switch(life)
+                {
+                    case 2:
+                        Debug.Log("Life " + life);
+                        break;
+                    case 1:
+                        Debug.Log("Life " + life);
+                        break;
+                    case 0:
+                        Debug.Log("Dead! ");
+                        break;
+                }
+            }
+        }
+    }
+
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
     {
