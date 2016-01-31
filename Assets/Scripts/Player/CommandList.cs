@@ -6,6 +6,7 @@ using System.Text;
 using System.Collections;
 using Assets.Scripts.Enums;
 using Assets.Scripts;
+using UnityEngine.UI;
 
 public class CommandList : MonoBehaviour
 {
@@ -25,40 +26,83 @@ public class CommandList : MonoBehaviour
     private bool _updateCommandDemand;
     private bool _currentResult;
 
+    private GameObject _commandPrefab;
+
+    public Vector3 center;
+    public float buttonOffset = 1;
+
+    private Sprite _buttonASprite;
+    private Sprite _buttonBSprite;
+    private Sprite _arrowSprite;
+
+    public void GetNewCommandObject(Command command)
+    {
+        var commandObject = (GameObject) Instantiate(_commandPrefab, center, Quaternion.identity);
+        Debug.Log("new command instantiated");
+        commandObject.transform.parent = this.transform;
+        commandObject.transform.position = center + new Vector3(buttonOffset, 0, 0) * (List.Count - 1);
+
+        float angleLeft = 0;
+        float angleRight = 0;
+        switch (command.Left)
+        {
+            case CommandType.down:
+                angleLeft = 180;
+                break;
+            case CommandType.left:
+                angleLeft = 90;
+                break;
+            case CommandType.right:
+                angleLeft = 270;
+                break;
+        }
+
+        Sprite buttonSprite = new Sprite();
+        switch (command.Right)
+        {
+            case CommandType.down:
+                buttonSprite = _buttonASprite;
+                break;
+            case CommandType.right:
+                buttonSprite = _buttonBSprite;
+                break;
+        }
+        commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+        commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+    }
+    
     void Start()
     {
         List = new ArrayList();
-        CommandIndex = -1;
 
-        Command newCommand1 = getRandomCommand();
-        this.Add(newCommand1);
-        Debug.Log(newCommand1.Left + " " + newCommand1.Right);
+        _commandPrefab = Resources.Load<GameObject>("Prefabs/Command");
+        _buttonASprite = Resources.Load<Sprite>("Sprites/ButtonA");
+        _buttonBSprite = Resources.Load<Sprite>("Sprites/ButtonB");
+        _arrowSprite = Resources.Load<Sprite>("Sprites/Arrow");
 
-        Command newCommand2 = getRandomCommand();
-        this.Add(newCommand2);
-        Debug.Log(newCommand2.Left + " " + newCommand2.Right);
 
-        Command newCommand3 = getRandomCommand();
-        this.Add(newCommand3);
-        Debug.Log(newCommand3.Left + " " + newCommand2.Right);
+        for (int i = 0; i < 8; i++)
+        {
+            AddRandomCommand();
+        }
 
         CommandIndex = 0;
 
-        _updateCommandDemand = true;
+        //_updateCommandDemand = true;
     }
 
     void Update()
     {
-        if (_updateCommandDemand)
-        {
-            int i = 0;
-            foreach (Transform child in transform)
-            {
-                Command item = (Command)List[i++];
-                UpdateCommandSprite(child, item);
-            }
-            _updateCommandDemand = false;
-        }
+        //if (_updateCommandDemand)
+        //{
+        //    int i = 0;
+        //    foreach (Transform child in transform)
+        //    {
+        //        Command item = (Command)List[i++];
+        //    }
+        //    _updateCommandDemand = false;
+        //}
         foreach (Transform child in transform)
         {
             UpdateUnflashSprite(child);
@@ -81,44 +125,10 @@ public class CommandList : MonoBehaviour
         child.GetChild(1).GetComponent<SpriteRenderer>().color = Color.white;
     }
 
-    void UpdateCommandSprite(Transform child, Command item)
-    {
-        float angleLeft = 0;
-        float angleRight = 0;
-        switch (item.Left)
-        {
-            case CommandType.down:
-                angleLeft = 180;
-                break;
-            case CommandType.left:
-                angleLeft = 90;
-                break;
-            case CommandType.right:
-                angleLeft = 270;
-                break;
-        }
-        switch (item.Right)
-        {
-            case CommandType.down:
-                angleRight = 180;
-                break;
-            case CommandType.left:
-                angleRight = 90;
-                break;
-            case CommandType.right:
-                angleRight = 270;
-                break;
-        }
-        child.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
-
-        Sprite sprite = Resources.Load<Sprite>("Sprites/Button" + angleRight);
-        child.GetChild(1).GetComponent<SpriteRenderer>().sprite = sprite;
-    }
-
     public Command getRandomCommand()
     {
         int Length = _valuesCommandTypes.Length - 1;
-        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
+        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length - 2));
         CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
         return new Command(randomLeft, randomRight);
     }
@@ -161,6 +171,12 @@ public class CommandList : MonoBehaviour
     public void Add(Command command)
     {
         List.Add(command);
+        GetNewCommandObject(command);
+    }
+
+    public void AddRandomCommand()
+    {
+        Add(getRandomCommand());
     }
 
     public void Next()
