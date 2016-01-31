@@ -95,10 +95,15 @@ public class Player : MonoBehaviour, IControllable {
             spriteName = "LeftArmLeft";
         }
 
-        Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
-        GetComponent<SpriteRenderer>().sprite = sprite;
-        GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
-        GetComponent<SpriteRenderer>().transform.localScale = new Vector3(flip ? -1 : 1, 1, 1);
+        if(spriteName.CompareTo("Idle") != 0)
+        {
+            Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
+            GetComponent<SpriteRenderer>().sprite = sprite;
+            GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
+            GetComponent<SpriteRenderer>().transform.localScale = new Vector3(flip ? -1 : 1, 1, 1);
+        }
+
+
     }
 
     public void ResolveCommandResult(bool result)
