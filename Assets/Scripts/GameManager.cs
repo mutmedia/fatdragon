@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour {
     public Animator DragonAnimator;
     public GameObject FirebreathAnimator;
 
+    public List<int> highscore;
+
 
     public int life = 3;
     public int missMaxNumber = 5;
@@ -34,6 +36,24 @@ public class GameManager : MonoBehaviour {
 
     public EventHandler<EndGameEventArgs> EndGameEventHandler;
 
+    public void buildHighscore()
+    {
+        int BasePoints = 10000;
+        int i;
+        for(i = 0; i < 5;i++)
+        {
+            BasePoints *= 2 * i;
+            highscore.Add(BasePoints);
+        }
+        for (i = 5; i < 9; i++)
+        {
+            BasePoints *= 5 * i;
+            highscore.Add(BasePoints);
+        }
+
+        highscore.Add(BasePoints*10);
+    }
+
     void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
@@ -45,6 +65,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        buildHighscore();
         controllers = new List<IControl>();
 
         XBoxJoystickControl.Reset();
