@@ -43,11 +43,15 @@ public class CommandList : MonoBehaviour
         var lastCommandFound = CommandType.empty;
         for (int i = 0; i < 8; i++)
         {
+            var commandObjectSprite = transform.GetChild(i).GetChild(1);
+            
             if (lastCommandFound == List[i].Right || List[i].Right == CommandType.none)
             {
                 //Debug.Log(i + ": old group =( -- " + List[i].Right);
                 groups[currentGroup]++;
                 groups.Add(0);
+                commandObjectSprite.GetComponent<SpriteRenderer>().sprite = lastCommandFound == CommandType.right ? _buttonBSprite : _buttonASprite;
+
             }
             else
             {
@@ -66,18 +70,18 @@ public class CommandList : MonoBehaviour
         {
             var commandObjectSprite = transform.GetChild(i).GetChild(1);
 
-            if (groups[i] == 0)
-            {
-                commandObjectSprite.GetComponent<SpriteRenderer>().enabled = false;
-                commandObjectSprite.localPosition = new Vector2(-0.5f, commandObjectSprite.localPosition.y);
-                commandObjectSprite.localScale = new Vector2(1.1f, 1.0f);
-            }
-            else
-            {
-                commandObjectSprite.GetComponent<SpriteRenderer>().enabled = true;
-                commandObjectSprite.localPosition = new Vector2((float)groups[i]/2, commandObjectSprite.localPosition.y);
-                commandObjectSprite.localScale = new Vector2((float)groups[i] * 1.2f, 1.0f);
-            }
+            //if (groups[i] == 0)
+            //{
+                //commandObjectSprite.GetComponent<SpriteRenderer>().enabled = false;
+                //commandObjectSprite.localPosition = new Vector2(-0.5f, commandObjectSprite.localPosition.y);
+                //commandObjectSprite.localScale = new Vector2(1.1f, 1.0f);
+            //}
+            //else
+            //{
+                //commandObjectSprite.GetComponent<SpriteRenderer>().enabled = true;
+                //commandObjectSprite.localPosition = new Vector2((float)groups[i]/2, commandObjectSprite.localPosition.y);
+                //commandObjectSprite.localScale = new Vector2((float)groups[i] * 1.2f, 1.0f);
+            //}
         }
     }
     
@@ -147,7 +151,7 @@ public class CommandList : MonoBehaviour
         }
         else
         {
-            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = false;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
             commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
         }
         
@@ -214,7 +218,7 @@ public class CommandList : MonoBehaviour
         }
         else
         {
-            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = false;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
             commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
         }
     }
@@ -312,12 +316,15 @@ public class CommandList : MonoBehaviour
     public void OnTimerChangeEvent(object sender, EventArgs e)
     {
         _isCurrentRunSuccessful = _currentResult;
-        if (ResolveCommandEventHandler != null)
+        if (List[CommandIndex].Left != CommandType.none && List[CommandIndex].Right != CommandType.none)
         {
-            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+            if (ResolveCommandEventHandler != null)
             {
-                IsCorrect = _currentResult,
-            });
+                ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+                {
+                    IsCorrect = _currentResult,
+                });
+            }
         }
         Next();
         _isCurrentRunSuccessful = false;
@@ -337,16 +344,17 @@ public class CommandList : MonoBehaviour
 
 
     private int howMany = 0;
-    private int howManyToChange = 3;
+    private int howManyToChange = 4;
+    public float CHANCE_TO_RANDOM;
     public void Next()
     {
         howMany++;
         var rnd = new System.Random();
         if (CommandIndex % 2 == 0 )
         {
-            if (rnd.NextDouble() < 0.5)
+            if (rnd.NextDouble() < CHANCE_TO_RANDOM)
             {
-                ReplaceCommandObject(new Command(getRandomCommand().Left, List[CommandIndex].Right, true), CommandIndex - 1);
+                ReplaceCommandObject(new Command(getRandomCommand().Left, List[(8 + CommandIndex - 2) % 8].Right, true), (8 + CommandIndex - 1) % 8);
             }
         }
 
@@ -355,12 +363,12 @@ public class CommandList : MonoBehaviour
             ReplaceCommandObject(new Command(), CommandIndex);
         }
 
-        if (howMany > howManyToChange)
+        if (!(howMany < howManyToChange))
         {
-            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 4) % 8);
-            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 5) % 8);
-            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 6) % 8);
-            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 7) % 8);
+            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 4) % 8);
+            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 5) % 8);
+            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 6) % 8);
+            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 7) % 8);
             howMany = 0;
         }
         

@@ -15,7 +15,6 @@ namespace Assets.Scripts
         private bool _startCounting;
         private float _lastTime;
 
-        public CommandList CommandList;
 
         public EventHandler<EventArgs> TimeNextCommandEventHandler;
 
@@ -50,8 +49,7 @@ namespace Assets.Scripts
                     _lastTime = Time.time - (timeDelta - timePace);
                     if (TimeNextCommandEventHandler != null)
                     {
-                        //TimeNextCommandEventHandler.Invoke(this, new EventArgs());
-                        CommandList.Next();
+                        TimeNextCommandEventHandler.Invoke(this, new EventArgs());
                     }
                 }
             }
