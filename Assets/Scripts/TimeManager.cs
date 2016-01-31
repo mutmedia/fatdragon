@@ -12,7 +12,7 @@ namespace Assets.Scripts
         public float timeLimitRange;
         public float timePace;
         public bool flag = false;
-        private bool _startCounting;
+        private bool _startCounting = false;
         private float _lastTime;
 
 
@@ -20,17 +20,20 @@ namespace Assets.Scripts
 
         public void StartCounting()
         {
-            AudioSource music = GetComponent<AudioSource>();
             _startCounting = true;
-            music.Play();
-            music.loop = true;
             _lastTime = Time.time;
+        }
+
+        public void StopCounting()
+        {
+            _startCounting = false;
         }
 
         void Update()
         {
             if (_startCounting)
             {
+                //Debug.Log("hello");
                 flag = true;
                 float presentTime = Time.time;
                 float timeDelta = presentTime - _lastTime;

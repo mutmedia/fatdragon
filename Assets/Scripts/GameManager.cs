@@ -115,9 +115,7 @@ public class GameManager : MonoBehaviour {
         TheCommandList.ResolveCommandEventHandler += OnResolveCommand ;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
-
-        // REMOVETHIS
-        timeManager.StartCounting();
+        
 
         //Sounds
 	    TheCommandList.ResolveCommandEventHandler += soundManager.OnMistake;

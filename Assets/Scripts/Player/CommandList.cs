@@ -160,6 +160,14 @@ public class CommandList : MonoBehaviour
     public void ReplaceCommandObject(Command newCommand, int index)
     {
         List[index] = newCommand;
+
+        var s = "";
+
+        foreach (Command c in List)
+        {
+            s += "(" + c.Left + ", " + c.Right + ") ";
+        }
+        Debug.Log(s);
         var commandObject = transform.GetChild(index);
 
         float angleLeft = 0;
@@ -306,10 +314,10 @@ public class CommandList : MonoBehaviour
             result = true;
         }
 
-        if (result && !timeManager.flag)
-        {
-            result = false;
-        }
+        //if (result && !timeManager.flag)
+        //{
+        //    result = false;
+        //}
 
         _currentResult = result;
     }
@@ -356,13 +364,13 @@ public class CommandList : MonoBehaviour
         {
             if (rnd.NextDouble() < CHANCE_TO_RANDOM)
             {
-                ReplaceCommandObject(new Command(getRandomCommand().Left, List[(8 + CommandIndex - 2) % 8].Right, true), (8 + CommandIndex - 1) % 8);
+                //ReplaceCommandObject(new Command(getRandomCommand().Left, List[(8 + CommandIndex - 2) % 8].Right, true), (8 + CommandIndex - 1) % 8);
             }
         }
 
         if (CommandIndex % 2 == 1)
         {
-            ReplaceCommandObject(new Command(), CommandIndex);
+            //ReplaceCommandObject(new Command(), CommandIndex);
         }
 
         if (!(howMany < howManyToChange))
