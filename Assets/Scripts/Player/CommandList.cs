@@ -38,7 +38,8 @@ public class CommandList : MonoBehaviour
     public void GetNewCommandObject(Command command)
     {
         var commandObject = (GameObject) Instantiate(_commandPrefab, center, Quaternion.identity);
-        Debug.Log("new command instantiated");
+        commandObject.name = (List.Count - 1).ToString();
+        //Debug.Log("new command instantiated");
         commandObject.transform.parent = this.transform;
         commandObject.transform.position = center + new Vector3(buttonOffset, 0, 0) * (List.Count - 1);
 
@@ -94,22 +95,22 @@ public class CommandList : MonoBehaviour
 
     void Update()
     {
-        //if (_updateCommandDemand)
-        //{
-        //    int i = 0;
-        //    foreach (Transform child in transform)
-        //    {
-        //        Command item = (Command)List[i++];
-        //    }
-        //    _updateCommandDemand = false;
-        //}
         foreach (Transform child in transform)
         {
-            UpdateUnflashSprite(child);
+            //UpdateUnflashSprite(child);
+            if (child.name == CommandIndex.ToString())
+            {
+                child.GetChild(2).GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else
+            {
+                child.GetChild(2).GetComponent<SpriteRenderer>().enabled = false;
+            }
+
         }
         if(timeManager.flag)
         {
-            UpdateFlashSprite(transform.GetChild(CommandIndex));
+            //UpdateFlashSprite(transform.GetChild(CommandIndex));
         }
     }
 
@@ -151,21 +152,21 @@ public class CommandList : MonoBehaviour
         }
 
         _currentResult = result;
-
-        if (ResolveCommandEventHandler != null)
-        {
-            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
-            {
-                IsCorrect = result,
-            });
-        }
     }
 
     public void OnTimerChangeEvent(object sender, EventArgs e)
     {
         _isCurrentRunSuccessful = _currentResult;
+        if (ResolveCommandEventHandler != null)
+        {
+            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+            {
+                IsCorrect = _currentResult,
+            });
+        }
         Next();
         _isCurrentRunSuccessful = false;
+        _currentResult = false;
     }
 
     public void Add(Command command)

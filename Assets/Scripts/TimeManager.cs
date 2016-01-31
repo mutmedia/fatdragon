@@ -20,8 +20,8 @@ namespace Assets.Scripts
 
         public void StartCounting()
         {
-            _startCounting = true;
             AudioSource music = GetComponent<AudioSource>();
+            _startCounting = true;
             music.Play();
             music.loop = true;
             _lastTime = Time.time;
@@ -34,15 +34,20 @@ namespace Assets.Scripts
                 flag = true;
                 float presentTime = Time.time;
                 float timeDelta = presentTime - _lastTime;
-                if (timeDelta < timePace - timeLimitRange / 2)
+
+                if (timeDelta < timeLimitRange / 2)
                 {
                     flag = false;
                 }
                 else if (timePace + timeLimitRange / 2 < timeDelta)
                 {
-                    _lastTime = Time.time;
-                    TimeNextCommandEventHandler.Invoke(this, new EventArgs());
                     flag = false;
+                }
+
+                if (timeDelta - timePace > -0.01 && timeDelta - timePace < 0.01)
+                {
+                    _lastTime = Time.time - (timeDelta - timePace);
+                    TimeNextCommandEventHandler.Invoke(this, new EventArgs());
                 }
             }
         }

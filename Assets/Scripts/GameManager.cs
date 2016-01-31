@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
     private PlayerManager playerManager;
     private ScoreManager scoreManager;
     private TimeManager timeManager;
+    private SoundManager soundManager;
 
     public CommandList TheCommandList;
 
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour {
         playerManager = GetComponent<PlayerManager>();
         timeManager = GetComponent<TimeManager>();
         scoreManager = GetComponent<ScoreManager>();
+        soundManager = GetComponent<SoundManager>();
         TheCommandList.timeManager = timeManager;
     }
 
@@ -62,6 +64,9 @@ public class GameManager : MonoBehaviour {
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
         // REMOVETHIS
         timeManager.StartCounting();
+
+        //Sounds
+	    TheCommandList.ResolveCommandEventHandler += soundManager.OnMistake;
 
 	}
 
