@@ -82,7 +82,10 @@ public class CommandList : MonoBehaviour
         _arrowSprite = Resources.Load<Sprite>("Sprites/Arrow");
 
 
-        AddRandomCommand();
+        for (int i = 0; i < 8; i++)
+        {
+            AddRandomCommand();
+        }
 
         CommandIndex = 0;
 

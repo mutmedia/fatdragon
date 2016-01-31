@@ -59,24 +59,11 @@ public class GameManager : MonoBehaviour {
         //More event Logic
         TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
-	    TheCommandList.OnListOverEventHandler += OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
         // REMOVETHIS
         timeManager.StartCounting();
 
 	}
-
-    private int numberOfLoops = 0;
-    public int LoopsToIncrease = 3;
-    private void OnListOver(object sender, OnListOverEventArgs e)
-    {
-        numberOfLoops++;
-        if (numberOfLoops > LoopsToIncrease)
-        {
-            numberOfLoops = 0;
-            TheCommandList.AddRandomCommand();
-        }
-    }
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
     {

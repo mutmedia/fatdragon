@@ -15,11 +15,15 @@ namespace Assets.Scripts
         private bool _startCounting;
         private float _lastTime;
 
+
         public EventHandler<EventArgs> TimeNextCommandEventHandler;
 
         public void StartCounting()
         {
             _startCounting = true;
+            AudioSource music = GetComponent<AudioSource>();
+            music.Play();
+            music.loop = true;
             _lastTime = Time.time;
         }
 
