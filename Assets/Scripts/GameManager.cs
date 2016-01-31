@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour {
                         Debug.Log("Life " + life);
                         break;
                     case 1:
-                        //DragonAnimator.SetTrigger("PlayerMissesSmoke");
+                        DragonAnimator.SetTrigger("PlayerMissesSmoke");
                         Debug.Log("Life " + life);
                         break;
                     case 0:
