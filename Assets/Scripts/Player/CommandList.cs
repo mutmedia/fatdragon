@@ -29,28 +29,56 @@ public class CommandList : MonoBehaviour
     {
         List = new ArrayList();
         CommandIndex = -1;
-        Command newCommand = getRandomCommand();
-        this.Add(newCommand);
+
+        Command newCommand1 = getRandomCommand();
+        this.Add(newCommand1);
+        Debug.Log(newCommand1.Left + " " + newCommand1.Right);
+
+        Command newCommand2 = getRandomCommand();
+        this.Add(newCommand2);
+        Debug.Log(newCommand2.Left + " " + newCommand2.Right);
+
+        Command newCommand3 = getRandomCommand();
+        this.Add(newCommand3);
+        Debug.Log(newCommand3.Left + " " + newCommand2.Right);
+
+        CommandIndex = 0;
+
         _updateCommandDemand = true;
-        Debug.Log(newCommand.Left + " " + newCommand.Right);
     }
 
     void Update()
     {
-        if(_updateCommandDemand)
+        if (_updateCommandDemand)
         {
             int i = 0;
-            foreach(Transform child in transform)
+            foreach (Transform child in transform)
             {
                 Command item = (Command)List[i++];
                 UpdateCommandSprite(child, item);
             }
             _updateCommandDemand = false;
         }
+        foreach (Transform child in transform)
+        {
+            UpdateUnflashSprite(child);
+        }
         if(timeManager.flag)
         {
-            
+            UpdateFlashSprite(transform.GetChild(CommandIndex));
         }
+    }
+
+    void UpdateFlashSprite(Transform child)
+    {
+        child.GetChild(0).GetComponent<SpriteRenderer>().color = Color.yellow;
+        child.GetChild(1).GetComponent<SpriteRenderer>().color = Color.yellow;
+    }
+
+    void UpdateUnflashSprite(Transform child)
+    {
+        child.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+        child.GetChild(1).GetComponent<SpriteRenderer>().color = Color.white;
     }
 
     void UpdateCommandSprite(Transform child, Command item)
@@ -130,7 +158,6 @@ public class CommandList : MonoBehaviour
 
     public void Add(Command command)
     {
-        CommandIndex++;
         List.Add(command);
     }
 
