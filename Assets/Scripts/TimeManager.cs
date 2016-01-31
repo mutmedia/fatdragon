@@ -18,6 +18,11 @@ namespace Assets.Scripts
 
         public EventHandler<EventArgs> TimeNextCommandEventHandler;
 
+        public void StopCounting()
+        {
+            _startCounting = false;
+        }
+
         public void StartCounting()
         {
             AudioSource music = GetComponent<AudioSource>();

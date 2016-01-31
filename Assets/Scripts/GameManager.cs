@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using Assets.Scripts.Enums;
 using Assets.Scripts;
 
+public class EndGameEventArgs : EventArgs
+{
+    public float timeOfDeath { get; set; }
+}
+
 public class GameManager : MonoBehaviour {
 
     public List<IControl> controllers;
@@ -26,6 +31,8 @@ public class GameManager : MonoBehaviour {
     public GameState state = GameState.Playing;
     public GameState lastState;
     private float unpauseTime;
+
+    public EventHandler<EndGameEventArgs> EndGameEventHandler;
 
     void Awake()
     {
@@ -56,6 +63,7 @@ public class GameManager : MonoBehaviour {
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
                     player.CommandEventHandler += OnNewPlayerCommand;
+                    EndGameEventHandler = player.OnDeathResolve;
                     TheCommandList.Add(player);
                 }
             }
@@ -102,7 +110,15 @@ public class GameManager : MonoBehaviour {
                     case 0:
                         DragonAnimator.SetTrigger("PlayerDies");
                         //FirebreathAnimator.SetActive(true);
+                        timeManager.StopCounting();
                         Debug.Log("Dead! ");
+                        if (EndGameEventHandler != null)
+                        {
+                            EndGameEventHandler.Invoke(this, new EndGameEventArgs()
+                            {
+                                timeOfDeath = Time.time,
+                            });
+                        }
                         life = 3;
                         break;
                 }
