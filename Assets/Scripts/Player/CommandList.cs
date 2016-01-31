@@ -109,7 +109,9 @@ public class CommandList : MonoBehaviour
                 break;
         }
         child.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
-        child.GetChild(1).Rotate(new Vector3(0, 0, angleRight));
+
+        Sprite sprite = Resources.Load<Sprite>("Sprites/Button" + angleRight);
+        //child.GetComponent<SpriteRenderer>().sprite = sprite;
     }
 
     public Command getRandomCommand()
