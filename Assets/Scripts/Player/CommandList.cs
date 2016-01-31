@@ -256,7 +256,7 @@ public class CommandList : MonoBehaviour
         foreach (Transform child in transform)
         {
             //UpdateUnflashSprite(child);
-            if (child.name == CommandIndex.ToString())
+            if (child.name == ((8 + CommandIndex) % 8).ToString())
             {
                 child.GetChild(2).GetComponent<SpriteRenderer>().enabled = true;
             }

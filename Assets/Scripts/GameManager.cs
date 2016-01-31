@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour {
                 switch(life)
                 {
                     case 2:
-                        DragonAnimator.SetTrigger("PlayerMissesGurgle");
+                        //DragonAnimator.SetTrigger("PlayerMissesGurgle");
                         Debug.Log("Life " + life);
                         break;
                     case 1:
@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour {
                         Debug.Log("Life " + life);
                         break;
                     case 0:
-                        DragonAnimator.SetTrigger("PlayerDies");
+                        //DragonAnimator.SetTrigger("PlayerDies");
                         //FirebreathAnimator.SetActive(true);
                         timeManager.StopCounting();
                         Debug.Log("Dead! ");

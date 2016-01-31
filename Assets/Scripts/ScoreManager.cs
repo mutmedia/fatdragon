@@ -35,7 +35,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (e.IsCorrect)
         {
-            _score += BaseScore + (int)_combo * BaseScore;
+            _score += 10*BaseScore + (int)_combo * BaseScore;
         }
         else
         {
