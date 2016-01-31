@@ -62,13 +62,16 @@ public class Player : MonoBehaviour, IControllable {
                 string spriteName = "Blackened";
                 Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
                 GetComponent<SpriteRenderer>().sprite = sprite;
+            }
+            if (timeDelta - 2.0f > -0.05f && timeDelta - 2.0f < 0.05f)
+            {
                 resolveDeathSprite = false;
                 if (EndAnimationFinishedEventHandler != null)
                 {
                     EndAnimationFinishedEventHandler.Invoke(this, new EventArgs());
                 }
             }
-               
+
         }
         
     }
