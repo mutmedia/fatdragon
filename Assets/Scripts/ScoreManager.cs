@@ -59,7 +59,7 @@ public class ScoreManager : MonoBehaviour
             _currentStreak = 0;
 
         }
-        _combo = (10 + new decimal(_currentStreak))/10;
+        _combo = (1 + new decimal(_currentStreak));
         Debug.Log("Current combo is now " + _combo);
         ComboText.text = "x " + String.Format("{0:0.0}", _combo);
     }

@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour {
         TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
+
         // REMOVETHIS
         timeManager.StartCounting();
 

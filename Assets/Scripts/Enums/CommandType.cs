@@ -11,6 +11,7 @@ namespace Assets.Scripts.Enums
         right,
         up,
         left,
-        none
+        none,
+        empty
     }
 }
