@@ -40,11 +40,11 @@ namespace Assets.Scripts
                 float presentTime = Time.time;
                 float timeDelta = presentTime - _lastTime;
 
-                if (timeDelta < timeLimitRange / 2)
-                {
-                    flag = false;
-                }
-                else if (timePace + timeLimitRange / 2 < timeDelta)
+                //if (timeDelta < timeLimitRange / 2)
+                //{
+                    //flag = false;
+                //}
+                if (timePace + timeLimitRange < timeDelta)
                 {
                     flag = false;
                 }

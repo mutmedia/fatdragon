@@ -264,11 +264,12 @@ public class CommandList : MonoBehaviour
             {
                 child.GetChild(2).GetComponent<SpriteRenderer>().enabled = false;
             }
+            UpdateUnflashSprite(child);
 
         }
         if(timeManager.flag)
         {
-            //UpdateFlashSprite(transform.GetChild(CommandIndex));
+            UpdateFlashSprite(transform.GetChild(CommandIndex));
         }
         UpdateSprites();
     }
@@ -316,6 +317,7 @@ public class CommandList : MonoBehaviour
     public void OnTimerChangeEvent(object sender, EventArgs e)
     {
         _isCurrentRunSuccessful = _currentResult;
+        
         if (List[CommandIndex].Left != CommandType.none && List[CommandIndex].Right != CommandType.none)
         {
             if (ResolveCommandEventHandler != null)

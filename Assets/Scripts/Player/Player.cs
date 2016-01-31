@@ -118,7 +118,7 @@ public class Player : MonoBehaviour, IControllable {
         {
             Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
             GetComponent<SpriteRenderer>().sprite = sprite;
-            GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
+            //GetComponent<SpriteRenderer>().color = this.Number == 1 ? Color.blue : Color.red;
             GetComponent<SpriteRenderer>().transform.localScale = new Vector3(flip ? -1 : 1, 1, 1);
         }
 
