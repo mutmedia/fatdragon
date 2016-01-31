@@ -122,10 +122,13 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+    private int lifeStreak = 0;
+
     public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
     {
         if (!e.IsCorrect)
         {
+            lifeStreak = 0;
             misses++;
             if (misses >= missMaxNumber)
             {
@@ -158,6 +161,31 @@ public class GameManager : MonoBehaviour {
                         break;
                 }
             }
+        }
+        else
+        {
+            lifeStreak++;
+
+            if(lifeStreak >= 10)
+            {
+                if(life < 3)
+                {
+                    life++;
+                    switch (life)
+                    {
+                        case 2:
+                            DragonAnimator.SetTrigger("PlayerLifeGurgle");
+                            break;
+                        case 1:
+                            DragonAnimator.SetTrigger("PlayerLifeSmoke");
+                            break;
+                    }
+                }
+                
+                lifeStreak = 0;
+            }
+
+
         }
     }
 
