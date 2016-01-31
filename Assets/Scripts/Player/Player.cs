@@ -25,6 +25,8 @@ public class Player : MonoBehaviour, IControllable {
         _lastTime = Time.time;
     }
 
+    private bool resolveDeathSprite = false;
+    private float timeOfDeath;
 
     private bool inputChanged;
 	// Update is called once per frame
@@ -46,7 +48,24 @@ public class Player : MonoBehaviour, IControllable {
         }
         
 	    _lastCommand = _command;
-        UpdateSprite();
+        if(!resolveDeathSprite)
+        {
+            UpdateSprite();
+        }
+        else
+        {
+            float presentTime = Time.time;
+            float timeDelta = presentTime - timeOfDeath;
+            if (timeDelta - 0.9f > -0.05f && timeDelta - 0.9f < 0.05f)
+            {
+                string spriteName = "Blackened";
+                Sprite sprite = Resources.Load<Sprite>("Sprites/" + spriteName);
+                GetComponent<SpriteRenderer>().sprite = sprite;
+                resolveDeathSprite = false;
+            }
+               
+        }
+        
     }
 
     void UpdateSprite()
@@ -119,6 +138,12 @@ public class Player : MonoBehaviour, IControllable {
         {
             //Debug.Log("Fail!");
         }
+    }
+
+    public void OnDeathResolve(object sender, EndGameEventArgs e)
+    {
+        resolveDeathSprite = true;
+        timeOfDeath = e.timeOfDeath;
     }
 
     public void OnTimeSucessEvent(object sender, EventArgs e)
