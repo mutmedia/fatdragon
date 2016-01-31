@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Enums;
 using Assets.Scripts;
+using UnityEngine.UI;
 
 public class EndGameEventArgs : EventArgs
 {
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour {
     private ScoreManager scoreManager;
     private TimeManager timeManager;
     private SoundManager soundManager;
+
+    public GameObject highscorePanel;
 
     public Animator DragonAnimator;
     public GameObject FirebreathAnimator;
@@ -36,22 +39,34 @@ public class GameManager : MonoBehaviour {
 
     public EventHandler<EndGameEventArgs> EndGameEventHandler;
 
-    public void buildHighscore()
+    public void buildHighscore(object sende, EventArgs e)
     {
+        highscorePanel.SetActive(true);
         int BasePoints = 10000;
-        int i;
-        for(i = 0; i < 5;i++)
-        {
-            BasePoints *= 2 * i;
-            highscore.Add(BasePoints);
-        }
-        for (i = 5; i < 9; i++)
-        {
-            BasePoints *= 5 * i;
-            highscore.Add(BasePoints);
-        }
+   
+        highscorePanel.GetComponent<Transform>().GetChild(10).GetComponent<Text>().text = scoreManager._score.ToString();
 
-        highscore.Add(BasePoints*10);
+        int i = 0;
+        foreach(Transform child in highscorePanel.GetComponent<Transform>())
+        {
+            if(i < 10)
+            {
+                BasePoints += 10000 * (i + 1);
+
+                if (scoreManager._score >= BasePoints && scoreManager._score <= 10000 * (i + 2) + BasePoints)
+                {
+                    child.GetComponent<Text>().text = (10-i)+". Player";
+                    child.GetChild(0).GetComponent<Text>().text = scoreManager._score.ToString();
+                }
+                else
+                {
+                    child.GetChild(0).GetComponent<Text>().text = BasePoints + "";
+                }
+
+                i++;
+            }
+            
+        }
     }
 
     void Awake()
@@ -65,7 +80,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        buildHighscore();
+        
         controllers = new List<IControl>();
 
         XBoxJoystickControl.Reset();
@@ -85,6 +100,7 @@ public class GameManager : MonoBehaviour {
                     control.PauseRequestEvent += OnPauseRequestEvent;
                     player.CommandEventHandler += OnNewPlayerCommand;
                     EndGameEventHandler = player.OnDeathResolve;
+                    player.EndAnimationFinishedEventHandler = buildHighscore;
                     TheCommandList.Add(player);
                 }
             }
@@ -125,7 +141,7 @@ public class GameManager : MonoBehaviour {
                         Debug.Log("Life " + life);
                         break;
                     case 1:
-                        //DragonAnimator.SetTrigger("PlayerMissesSmoke");
+                        DragonAnimator.SetTrigger("PlayerMissesSmoke");
                         Debug.Log("Life " + life);
                         break;
                     case 0:
@@ -178,10 +194,12 @@ public class GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+        
         foreach (IControl c in controllers)
         {
             c.Update(state);
         }
+        
 	}
 
     private int commandsSent = 0;
