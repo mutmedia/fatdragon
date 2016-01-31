@@ -36,14 +36,16 @@ public class ScoreManager : MonoBehaviour
         if (e.IsCorrect)
         {
             _score += BaseScore + (int)_combo * BaseScore;
-            ScoreText.text = "Score: " + _score;
         }
         else
         {
+            _score -= BaseScore;
             _combo = 0;
         }
+
+        ScoreText.text = "Score: " + _score;
         
-        Debug.Log("SCORE: " + _score);
+        //Debug.Log("SCORE: " + _score);
     }
 
     public void OnListOver(object sender, OnListOverEventArgs e)
