@@ -125,6 +125,7 @@ public class CommandList : MonoBehaviour
     {
         _isCurrentRunSuccessful = _currentResult;
         Next();
+        _isCurrentRunSuccessful = false;
     }
 
     public void Add(Command command)
