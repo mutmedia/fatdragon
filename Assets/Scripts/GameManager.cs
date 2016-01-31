@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using Assets.Scripts.Enums;
 using Assets.Scripts;
 
+public class EndGameEventArgs : EventArgs
+{
+    public float timeOfDeath { get; set; }
+}
+
 public class GameManager : MonoBehaviour {
 
     public List<IControl> controllers;
@@ -13,11 +18,41 @@ public class GameManager : MonoBehaviour {
     private TimeManager timeManager;
     private SoundManager soundManager;
 
+    public Animator DragonAnimator;
+    public GameObject FirebreathAnimator;
+
+    public List<int> highscore;
+
+
+    public int life = 3;
+    public int missMaxNumber = 5;
+    private int misses = 0;
+
     public CommandList TheCommandList;
 
     public GameState state = GameState.Playing;
     public GameState lastState;
     private float unpauseTime;
+
+    public EventHandler<EndGameEventArgs> EndGameEventHandler;
+
+    public void buildHighscore()
+    {
+        int BasePoints = 10000;
+        int i;
+        for(i = 0; i < 5;i++)
+        {
+            BasePoints *= 2 * i;
+            highscore.Add(BasePoints);
+        }
+        for (i = 5; i < 9; i++)
+        {
+            BasePoints *= 5 * i;
+            highscore.Add(BasePoints);
+        }
+
+        highscore.Add(BasePoints*10);
+    }
 
     void Awake()
     {
@@ -30,6 +65,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        buildHighscore();
         controllers = new List<IControl>();
 
         XBoxJoystickControl.Reset();
@@ -48,6 +84,7 @@ public class GameManager : MonoBehaviour {
                     controllers.Add(control);
                     control.PauseRequestEvent += OnPauseRequestEvent;
                     player.CommandEventHandler += OnNewPlayerCommand;
+                    EndGameEventHandler = player.OnDeathResolve;
                     TheCommandList.Add(player);
                 }
             }
@@ -60,6 +97,7 @@ public class GameManager : MonoBehaviour {
         
         //More event Logic
         TheCommandList.ResolveCommandEventHandler += scoreManager.OnResolveCommand;
+        TheCommandList.ResolveCommandEventHandler += OnResolveCommand ;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
 
@@ -70,6 +108,46 @@ public class GameManager : MonoBehaviour {
 	    TheCommandList.ResolveCommandEventHandler += soundManager.OnMistake;
 
 	}
+
+    public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
+    {
+        if (!e.IsCorrect)
+        {
+            misses++;
+            if (misses >= missMaxNumber)
+            {
+                misses = 0;
+                life--;
+
+                switch(life)
+                {
+                    case 2:
+                        DragonAnimator.SetTrigger("PlayerMissesGurgle");
+                        Debug.Log("Life " + life);
+                        break;
+                    case 1:
+                        //DragonAnimator.SetTrigger("PlayerMissesSmoke");
+                        Debug.Log("Life " + life);
+                        break;
+                    case 0:
+                        DragonAnimator.SetTrigger("PlayerDies");
+                        //FirebreathAnimator.SetActive(true);
+                        timeManager.StopCounting();
+                        Debug.Log("Dead! ");
+                        if (EndGameEventHandler != null)
+                        {
+                            EndGameEventHandler.Invoke(this, new EndGameEventArgs()
+                            {
+                                timeOfDeath = Time.time,
+                            });
+                        }
+                        life = 3;
+                        break;
+                }
+            }
+        }
+    }
+
 
     private void OnPauseRequestEvent(object sender, EventArgs e)
     {
