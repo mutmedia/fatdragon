@@ -88,7 +88,8 @@ public class GameManager : MonoBehaviour {
 
         for (int i = 0; i < 4 && !noControlAvailable; i++)
         {
-            var control = XBoxJoystickControl.GetControl();
+            var keyboard = KeyboardControl.GetControl();
+            IControl control = keyboard == null ? XBoxJoystickControl.GetControl() : keyboard;
             if (control != null)
             {
                 var player = playerManager.CreatePlayer();

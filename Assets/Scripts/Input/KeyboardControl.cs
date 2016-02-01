@@ -3,7 +3,7 @@ using Assets.Scripts.Enums;
 using Assets.Scripts.Interfaces;
 using UnityEngine;
 
-class XBoxJoystickControl : IControl
+class KeyboardControl : IControl
 {
     private float triggerThreshold = 0.3f;
 
@@ -11,24 +11,20 @@ class XBoxJoystickControl : IControl
 
     private IControllable controllable;
     private int index;
-    private float deadzone;
 
     public event EventHandler PauseRequestEvent;
 
-    private XBoxJoystickControl(int index, float deadzone)
-    {
-        this.index = index;
-        this.deadzone = deadzone;
-    }
-
+    static bool wasInstantiated = false;
     public static IControl GetControl()
     {
         var joysticks = Input.GetJoystickNames();
-        Debug.Log(joysticks[0] + joysticks[0]);
-        if ((indexCounter + 1) > joysticks.Length)
-            return null;
+        if (joysticks.Length == 0 && !wasInstantiated)
+        {
+            wasInstantiated = true;
+            return new KeyboardControl();
+        }
 
-        return new XBoxJoystickControl(++indexCounter, 0.3f);
+        return null;
     }
 
     public static void Reset()
@@ -49,22 +45,22 @@ class XBoxJoystickControl : IControl
         }
 
         // Get X and Y for left analog stick
-        float x = Input.GetAxisRaw("Joystick" + index + "XAxis");
-        float y = Input.GetAxisRaw("Joystick" + index + "YAxis");
+        float x = Input.GetAxisRaw("Keyboard" + "XAxis");
+        float y = Input.GetAxisRaw("Keyboard" + "YAxis");
 
-        if (y > deadzone)
+        if (y > 0)
         {
             controllable.MoveLeftSide(CommandType.down, state);
         }
-        else if (y < -deadzone)
+        else if (y < 0)
         {
             controllable.MoveLeftSide(CommandType.up, state);
         }
-        else if (x < -deadzone)
+        else if (x < 0)
         {
             controllable.MoveLeftSide(CommandType.left, state);
         }
-        else if (x > deadzone)
+        else if (x > 0)
         {
             controllable.MoveLeftSide(CommandType.right, state);
         }
@@ -73,28 +69,26 @@ class XBoxJoystickControl : IControl
             controllable.MoveLeftSide(CommandType.none, state);
         }
 
-        if (Input.GetButton("Joystick" + index + "Button1"))
+        if (Input.GetButton("Keyboard" + "Button1"))
         {
             controllable.MoveRightSide(CommandType.right, state);
         }
-        else if (Input.GetButton("Joystick" + index + "Button2"))
+        else if (Input.GetButton("Keyboard" + "Button2"))
         {
             controllable.MoveRightSide(CommandType.left, state);
         }
-        else if (Input.GetButton("Joystick" + index + "Button3"))
+        else if (Input.GetButton("Keyboard" + "Button3"))
         {
             controllable.MoveRightSide(CommandType.up, state);
         }
-        else if (Input.GetButton("Joystick" + index + "Button0"))
+        else if (Input.GetButton("Keyboard" + "Button0"))
         {
             controllable.MoveRightSide(CommandType.down, state);
         }
         else
         {
             controllable.MoveRightSide(CommandType.none, state);
-        }
-
-        
+        }        
 
         if (Input.GetButton("Start"))
         {
