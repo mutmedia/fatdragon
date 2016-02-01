@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour {
     public GameObject highscorePanel;
 
     public Animator DragonAnimator;
-    public GameObject FirebreathAnimator;
 
     public List<int> highscore;
 
@@ -116,18 +115,20 @@ public class GameManager : MonoBehaviour {
         TheCommandList.ResolveCommandEventHandler += OnResolveCommand ;
         TheCommandList.OnListOverEventHandler += scoreManager.OnListOver;
         timeManager.TimeNextCommandEventHandler += TheCommandList.OnTimerChangeEvent;
-        // REMOVETHIS
-        timeManager.StartCounting();
+        
 
         //Sounds
 	    TheCommandList.ResolveCommandEventHandler += soundManager.OnMistake;
 
 	}
 
+    private int lifeStreak = 0;
+
     public void OnResolveCommand(object sende, ResolveCommandEventArgs e)
     {
         if (!e.IsCorrect)
         {
+            lifeStreak = 0;
             misses++;
             if (misses >= missMaxNumber)
             {
@@ -137,11 +138,11 @@ public class GameManager : MonoBehaviour {
                 switch(life)
                 {
                     case 2:
-                        DragonAnimator.SetTrigger("PlayerMissesGurgle");
+                        DragonAnimator.SetTrigger("PlayerMisses");
                         Debug.Log("Life " + life);
                         break;
                     case 1:
-                        DragonAnimator.SetTrigger("PlayerMissesSmoke");
+                        DragonAnimator.SetTrigger("PlayerMissesSmokes");
                         Debug.Log("Life " + life);
                         break;
                     case 0:
@@ -160,6 +161,31 @@ public class GameManager : MonoBehaviour {
                         break;
                 }
             }
+        }
+        else
+        {
+            lifeStreak++;
+
+            if(lifeStreak >= 10)
+            {
+                if(life < 3)
+                {
+                    life++;
+                    switch (life)
+                    {
+                        case 2:
+                            DragonAnimator.SetTrigger("PlayerLifeGurgle");
+                            break;
+                        case 1:
+                            DragonAnimator.SetTrigger("PlayerLifeSmoke");
+                            break;
+                    }
+                }
+                
+                lifeStreak = 0;
+            }
+
+
         }
     }
 

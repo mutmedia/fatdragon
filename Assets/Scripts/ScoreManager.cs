@@ -12,11 +12,11 @@ public class ScoreManager : MonoBehaviour
     public int _score;
     private decimal _combo;
     private int _currentStreak = 0;
+    private string _feedBackText = "";
 
     public Text ScoreText;
     public Text ComboText;
-
-
+    public Text FeedbackText;
     
     
     // Use this for initialization
@@ -35,16 +35,21 @@ public class ScoreManager : MonoBehaviour
     {
         if (e.IsCorrect)
         {
-            _score += BaseScore + (int)_combo * BaseScore;
+            _score += 10*BaseScore + (int)_combo * BaseScore;
+            _feedBackText = "GOOD!";
+            FeedbackText.color = Color.green;
         }
         else
         {
             _score -= BaseScore;
             _combo = 0;
+            _feedBackText = "BAD.";
+            FeedbackText.color = Color.red;
         }
 
         ScoreText.text = "Score: " + _score;
-        
+        FeedbackText.text = _feedBackText;
+
         //Debug.Log("SCORE: " + _score);
     }
 
@@ -59,7 +64,7 @@ public class ScoreManager : MonoBehaviour
             _currentStreak = 0;
 
         }
-        _combo = (10 + new decimal(_currentStreak))/10;
+        _combo = (1 + new decimal(_currentStreak));
         Debug.Log("Current combo is now " + _combo);
         ComboText.text = "x " + String.Format("{0:0.0}", _combo);
     }

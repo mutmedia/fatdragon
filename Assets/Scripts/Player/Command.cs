@@ -9,10 +9,12 @@ using Assets.Scripts.Enums;
     {
         public CommandType Left;
         public CommandType Right;
+        public bool IsSpecial;
 
-        public Command(CommandType left = CommandType.none, CommandType right = CommandType.none)
+        public Command(CommandType left = CommandType.none, CommandType right = CommandType.none, bool isSpecial = false)
         {
             Left = left;
             Right = right;
+            IsSpecial = isSpecial;
         }
     }

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class CommandList : MonoBehaviour
 {
     int CommandIndex;
-    public ArrayList List;
+    public List<Command> List;
     public List<Player> Players = new List<Player>();
 
     public TimeManager timeManager;
@@ -35,6 +35,56 @@ public class CommandList : MonoBehaviour
     private Sprite _buttonBSprite;
     private Sprite _arrowSprite;
 
+
+    public void UpdateSprites()
+    {
+        var groups = new List<int>();
+        var currentGroup = -1;
+        var lastCommandFound = CommandType.empty;
+        for (int i = 0; i < 8; i++)
+        {
+            var commandObjectSprite = transform.GetChild(i).GetChild(1);
+            
+            if (lastCommandFound == List[i].Right || List[i].Right == CommandType.none)
+            {
+                //Debug.Log(i + ": old group =( -- " + List[i].Right);
+                groups[currentGroup]++;
+                groups.Add(0);
+                commandObjectSprite.GetComponent<SpriteRenderer>().sprite = lastCommandFound == CommandType.right ? _buttonBSprite : _buttonASprite;
+
+            }
+            else
+            {
+                //Debug.Log(i + ": new group =) -- " + List[i].Right);
+                groups.Add(1);
+                currentGroup = groups.Count - 1;
+            }
+            lastCommandFound = List[i].Right == CommandType.none ? lastCommandFound : List[i].Right;
+        }
+
+        //var logM = "";
+        //groups.ForEach(g => logM += g.ToString() + "-");
+        //Debug.Log(logM);
+
+        for (int i = 0; i < 8; i++)
+        {
+            var commandObjectSprite = transform.GetChild(i).GetChild(1);
+
+            //if (groups[i] == 0)
+            //{
+                //commandObjectSprite.GetComponent<SpriteRenderer>().enabled = false;
+                //commandObjectSprite.localPosition = new Vector2(-0.5f, commandObjectSprite.localPosition.y);
+                //commandObjectSprite.localScale = new Vector2(1.1f, 1.0f);
+            //}
+            //else
+            //{
+                //commandObjectSprite.GetComponent<SpriteRenderer>().enabled = true;
+                //commandObjectSprite.localPosition = new Vector2((float)groups[i]/2, commandObjectSprite.localPosition.y);
+                //commandObjectSprite.localScale = new Vector2((float)groups[i] * 1.2f, 1.0f);
+            //}
+        }
+    }
+    
     public void GetNewCommandObject(Command command)
     {
         var commandObject = (GameObject) Instantiate(_commandPrefab, center, Quaternion.identity);
@@ -68,14 +118,123 @@ public class CommandList : MonoBehaviour
                 buttonSprite = _buttonBSprite;
                 break;
         }
-        commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
-        commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
-        commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+
+
+        if (command.Left != CommandType.none)
+        {
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            if (command.IsSpecial)
+            {
+                commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.gray;
+            }
+            else
+            {
+                commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+            commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        }
+        else
+        {
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+            commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        }
+
+        //commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+        //commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+
+        if (command.Right != CommandType.none)
+        {
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+        }
+        else
+        {
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+        }
+        
     }
-    
+
+    public void ReplaceCommandObject(Command newCommand, int index)
+    {
+        List[index] = newCommand;
+
+        var s = "";
+
+        foreach (Command c in List)
+        {
+            s += "(" + c.Left + ", " + c.Right + ") ";
+        }
+        Debug.Log(s);
+        var commandObject = transform.GetChild(index);
+
+        float angleLeft = 0;
+        float angleRight = 0;
+        switch (newCommand.Left)
+        {
+            case CommandType.down:
+                angleLeft = 180;
+                break;
+            case CommandType.left:
+                angleLeft = 90;
+                break;
+            case CommandType.right:
+                angleLeft = 270;
+                break;
+        }
+
+        Sprite buttonSprite = new Sprite();
+        switch (newCommand.Right)
+        {
+            case CommandType.down:
+                buttonSprite = _buttonASprite;
+                break;
+            case CommandType.right:
+                buttonSprite = _buttonBSprite;
+                break;
+        }
+
+        if (newCommand.Left != CommandType.none)
+        {
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            if (newCommand.IsSpecial)
+            {
+                commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.gray;
+            }
+            else
+            {
+                commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+            commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        }
+        else
+        {
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+            commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+            commandObject.transform.GetChild(0).Rotate(new Vector3(0, 0, angleLeft));
+        }
+
+        //commandObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _arrowSprite;
+
+        if (newCommand.Right != CommandType.none)
+        {
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+        }
+        else
+        {
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
+            commandObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = buttonSprite;
+        }
+    }
+
+
     void Start()
     {
-        List = new ArrayList();
+        List = new List<Command>();
 
         _commandPrefab = Resources.Load<GameObject>("Prefabs/Command");
         _buttonASprite = Resources.Load<Sprite>("Sprites/ButtonA");
@@ -85,7 +244,14 @@ public class CommandList : MonoBehaviour
 
         for (int i = 0; i < 8; i++)
         {
-            AddRandomCommand();
+            if (i%2 != 0)
+            {
+                Add(new Command());
+            }
+            else
+            {
+                AddRandomCommand();
+            }
         }
 
         CommandIndex = 0;
@@ -98,7 +264,7 @@ public class CommandList : MonoBehaviour
         foreach (Transform child in transform)
         {
             //UpdateUnflashSprite(child);
-            if (child.name == CommandIndex.ToString())
+            if (child.name == ((8 + CommandIndex) % 8).ToString())
             {
                 child.GetChild(2).GetComponent<SpriteRenderer>().enabled = true;
             }
@@ -106,12 +272,14 @@ public class CommandList : MonoBehaviour
             {
                 child.GetChild(2).GetComponent<SpriteRenderer>().enabled = false;
             }
+            UpdateUnflashSprite(child);
 
         }
         if(timeManager.flag)
         {
-            //UpdateFlashSprite(transform.GetChild(CommandIndex));
+            UpdateFlashSprite(transform.GetChild(CommandIndex));
         }
+        UpdateSprites();
     }
 
     void UpdateFlashSprite(Transform child)
@@ -129,8 +297,8 @@ public class CommandList : MonoBehaviour
     public Command getRandomCommand()
     {
         int Length = _valuesCommandTypes.Length - 1;
-        CommandType randomRight = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length - 2));
-        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(Length));
+        CommandType randomRight = (CommandType) _valuesCommandTypes.GetValue(_random.Next(2));
+        CommandType randomLeft = (CommandType)_valuesCommandTypes.GetValue(_random.Next(4));
         return new Command(randomLeft, randomRight);
     }
 
@@ -146,10 +314,10 @@ public class CommandList : MonoBehaviour
             result = true;
         }
 
-        if (result && !timeManager.flag)
-        {
-            result = false;
-        }
+        //if (result && !timeManager.flag)
+        //{
+        //    result = false;
+        //}
 
         _currentResult = result;
     }
@@ -157,12 +325,16 @@ public class CommandList : MonoBehaviour
     public void OnTimerChangeEvent(object sender, EventArgs e)
     {
         _isCurrentRunSuccessful = _currentResult;
-        if (ResolveCommandEventHandler != null)
+        
+        if (List[CommandIndex].Left != CommandType.none && List[CommandIndex].Right != CommandType.none)
         {
-            ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+            if (ResolveCommandEventHandler != null)
             {
-                IsCorrect = _currentResult,
-            });
+                ResolveCommandEventHandler.Invoke(this, new ResolveCommandEventArgs()
+                {
+                    IsCorrect = _currentResult,
+                });
+            }
         }
         Next();
         _isCurrentRunSuccessful = false;
@@ -180,8 +352,36 @@ public class CommandList : MonoBehaviour
         Add(getRandomCommand());
     }
 
+
+    private int howMany = 0;
+    private int howManyToChange = 4;
+    public float CHANCE_TO_RANDOM;
     public void Next()
     {
+        howMany++;
+        var rnd = new System.Random();
+        if (CommandIndex % 2 == 0 )
+        {
+            if (rnd.NextDouble() < CHANCE_TO_RANDOM)
+            {
+                //ReplaceCommandObject(new Command(getRandomCommand().Left, List[(8 + CommandIndex - 2) % 8].Right, true), (8 + CommandIndex - 1) % 8);
+            }
+        }
+
+        if (CommandIndex % 2 == 1)
+        {
+            //ReplaceCommandObject(new Command(), CommandIndex);
+        }
+
+        if (!(howMany < howManyToChange))
+        {
+            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 4) % 8);
+            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 5) % 8);
+            //ReplaceCommandObject(getRandomCommand(), (CommandIndex + 6) % 8);
+            ReplaceCommandObject(getRandomCommand(), (CommandIndex + 7) % 8);
+            howMany = 0;
+        }
+        
         CommandIndex++;
 
         if (CommandIndex >= List.Count)
@@ -194,6 +394,7 @@ public class CommandList : MonoBehaviour
                     IsSuccessful = _isCurrentRunSuccessful,
                 } );
             }
+
             _isCurrentRunSuccessful = true;
         }
     }

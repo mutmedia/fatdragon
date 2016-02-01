@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
 public class SoundManager : MonoBehaviour
 {
@@ -9,6 +10,28 @@ public class SoundManager : MonoBehaviour
     public float highPitchRange = 1.05f;            //The highest a sound effect will be randomly pitched.
 
     public AudioClip MistakeSound;
+
+    public AudioClip musicIntro;
+    public AudioClip musicLoop;
+
+    public TimeManager timeManager;
+
+    public void Start()
+    {
+        musicSource.clip = musicIntro;
+        musicSource.Play();
+
+        Invoke("PlayLoopMusic", musicSource.clip.length);
+    }
+
+    public void PlayLoopMusic()
+    {
+        musicSource.Stop();
+        musicSource.clip = musicLoop;
+        musicSource.loop = true;
+        musicSource.Play();
+        timeManager.StartCounting();
+    }
 
     public void OnMistake(object sender, ResolveCommandEventArgs e)
     {
@@ -24,7 +47,7 @@ public class SoundManager : MonoBehaviour
         //Set the clip of our efxSource audio source to the clip passed in as a parameter.
         efxSource.clip = clip;
 
-        Debug.Log("SOUND");
+        //Debug.Log("SOUND");
 
         //Play the clip.
         efxSource.Play();
